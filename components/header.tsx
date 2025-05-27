@@ -247,7 +247,7 @@ export function Header() {
                         Blog
                     </Link>
                 </nav>
-                <div className="flex items-center gap-2">
+                {/* <div className="flex items-center gap-2">
                     <Button
                         variant="ghost"
                         size="icon"
@@ -334,7 +334,7 @@ export function Header() {
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                </div>
+                </div> */}
             </div>
         </header>
     );

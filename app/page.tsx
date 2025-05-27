@@ -43,8 +43,6 @@ import { FeaturedDestinations } from "@/components/featured-destinations";
 import { PopularTours } from "@/components/popular-tours";
 import { Testimonials } from "@/components/testimonials";
 import { Newsletter } from "@/components/newsletter";
-import { Header } from "@/components/header";
-import { Footer } from "@/components/footer";
 
 export default function Home() {
     const [date, setDate] = useState<Date>();
@@ -55,14 +53,19 @@ export default function Home() {
             <main className="flex-1">
                 <section className="relative">
                     <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/50 z-10" />
-                    <div className="relative h-[600px]">
-                        <Image
-                            src="/placeholder.svg?height=600&width=1200"
-                            alt="Travel destinations"
-                            fill
-                            className="object-cover"
-                            priority
-                        />
+                    <div className="relative h-[800px]">
+                        <video
+                            autoPlay
+                            loop
+                            muted
+                            playsInline
+                            className="absolute inset-0 w-full h-full object-cover"
+                        >
+                            <source
+                                src="https://minio.fares.vn/mixivivu-dev/video/Mixivivuduthuyen.mp4"
+                                type="video/mp4"
+                            />
+                        </video>
                     </div>
                     <div className="absolute inset-0 z-20 flex items-center justify-center">
                         <div className="container px-4 md:px-6">
@@ -88,7 +91,7 @@ export default function Home() {
                                         defaultValue="tours"
                                         className="w-full"
                                     >
-                                        <TabsList className="grid w-full grid-cols-4 rounded-none rounded-t-lg h-14">
+                                        <TabsList className="grid w-full grid-cols-3 gap-4 rounded-none rounded-t-lg h-14">
                                             <TabsTrigger
                                                 value="tours"
                                                 className="data-[state=active]:bg-background rounded-tl-lg"
@@ -109,13 +112,6 @@ export default function Home() {
                                             >
                                                 <Plane className="mr-2 h-4 w-4" />
                                                 Chuyến Bay
-                                            </TabsTrigger>
-                                            <TabsTrigger
-                                                value="planner"
-                                                className="data-[state=active]:bg-background rounded-tr-lg"
-                                            >
-                                                <MapPin className="mr-2 h-4 w-4" />
-                                                Lập Kế Hoạch
                                             </TabsTrigger>
                                         </TabsList>
                                         <TabsContent
@@ -196,7 +192,7 @@ export default function Home() {
                                                 <div className="flex items-end">
                                                     <Button className="w-full">
                                                         <Search className="mr-2 h-4 w-4" />
-                                                        Search Tours
+                                                        Tìm chuyến đi
                                                     </Button>
                                                 </div>
                                             </div>
@@ -276,7 +272,7 @@ export default function Home() {
                                                 <div className="flex items-end">
                                                     <Button className="w-full">
                                                         <Search className="mr-2 h-4 w-4" />
-                                                        Search Hotels
+                                                        Tìm khách sạn
                                                     </Button>
                                                 </div>
                                             </div>
@@ -338,7 +334,7 @@ export default function Home() {
                                                 <div className="flex items-end">
                                                     <Button className="w-full">
                                                         <Search className="mr-2 h-4 w-4" />
-                                                        Search Flights
+                                                        Tìm chuyến bay
                                                     </Button>
                                                 </div>
                                             </div>
