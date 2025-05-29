@@ -33,9 +33,16 @@ import {
     Globe,
     Search,
     ArrowRight,
+    Star,
+    Clock,
+    Users,
+    Shield,
+    Headphones,
+    CreditCard,
+    ThumbsUp,
 } from "lucide-react";
 import { format } from "date-fns";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
@@ -43,9 +50,34 @@ import { FeaturedDestinations } from "@/components/featured-destinations";
 import { PopularTours } from "@/components/popular-tours";
 import { Testimonials } from "@/components/testimonials";
 import { Newsletter } from "@/components/newsletter";
+import { motion } from "framer-motion";
+import AOS from "aos";
+import "aos/dist/aos.css";
 
 export default function Home() {
     const [date, setDate] = useState<Date>();
+
+    useEffect(() => {
+        AOS.init({
+            duration: 1000,
+            once: true,
+            easing: "ease-in-out",
+        });
+    }, []);
+
+    const fadeInUp = {
+        initial: { opacity: 0, y: 60 },
+        animate: { opacity: 1, y: 0 },
+        transition: { duration: 1.5 },
+    };
+
+    const staggerContainer = {
+        animate: {
+            transition: {
+                staggerChildren: 0.1,
+            },
+        },
+    };
 
     return (
         <div className="flex min-h-screen flex-col">
@@ -67,10 +99,20 @@ export default function Home() {
                             />
                         </video>
                     </div>
-                    <div className="absolute inset-0 z-20 flex items-center justify-center">
+                    <motion.div
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8 }}
+                        className="absolute inset-0 z-20 flex items-center justify-center"
+                    >
                         <div className="container px-4 md:px-6">
                             <div className="flex flex-col items-center space-y-4 text-center">
-                                <div className="space-y-2">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.8, delay: 0.2 }}
+                                    className="space-y-2"
+                                >
                                     <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl lg:text-6xl/none text-white">
                                         Khám Phá Hành Trình Hoàn Hảo Của Bạn
                                     </h1>
@@ -79,11 +121,16 @@ export default function Home() {
                                         du lịch được chọn lọc, lịch trình cá
                                         nhân hóa và các ưu đãi độc quyền.
                                     </p>
-                                </div>
+                                </motion.div>
                             </div>
                         </div>
-                    </div>
-                    <div className="absolute bottom-0 left-0 right-0 z-20 transform translate-y-1/2">
+                    </motion.div>
+                    <motion.div
+                        initial={{ opacity: 0, y: 40 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{ duration: 0.8, delay: 0.4 }}
+                        className="absolute bottom-0 left-0 right-0 z-20 transform translate-y-1/2"
+                    >
                         <div className="container px-4 md:px-6">
                             <Card className="border-none shadow-lg">
                                 <CardContent className="p-0">
@@ -91,7 +138,7 @@ export default function Home() {
                                         defaultValue="tours"
                                         className="w-full"
                                     >
-                                        <TabsList className="grid w-full grid-cols-3 gap-4 rounded-none rounded-t-lg h-14">
+                                        <TabsList className="grid w-full grid-cols-1 gap-4 rounded-none rounded-t-lg h-14">
                                             <TabsTrigger
                                                 value="tours"
                                                 className="data-[state=active]:bg-background rounded-tl-lg"
@@ -99,20 +146,20 @@ export default function Home() {
                                                 <Globe className="mr-2 h-4 w-4" />
                                                 Tour
                                             </TabsTrigger>
-                                            <TabsTrigger
+                                            {/* <TabsTrigger
                                                 value="hotels"
                                                 className="data-[state=active]:bg-background"
                                             >
                                                 <Hotel className="mr-2 h-4 w-4" />
                                                 Khách Sạn
-                                            </TabsTrigger>
-                                            <TabsTrigger
+                                            </TabsTrigger> */}
+                                            {/* <TabsTrigger
                                                 value="flights"
                                                 className="data-[state=active]:bg-background"
                                             >
                                                 <Plane className="mr-2 h-4 w-4" />
                                                 Chuyến Bay
-                                            </TabsTrigger>
+                                            </TabsTrigger> */}
                                         </TabsList>
                                         <TabsContent
                                             value="tours"
@@ -411,29 +458,57 @@ export default function Home() {
                                 </CardContent>
                             </Card>
                         </div>
-                    </div>
+                    </motion.div>
                 </section>
 
-                <section className="py-24 mt-24">
+                <section
+                    className="py-24 mt-24 bg-gradient-to-b from-background to-muted"
+                    data-aos="fade-up"
+                >
                     <div className="container px-4 md:px-6">
-                        <div className="flex flex-col items-center justify-center space-y-4 text-center">
-                            <div className="space-y-2">
-                                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                                    Điểm Đến Nổi Bật
-                                </h2>
-                                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                                    Khám phá những điểm đến tuyệt đẹp được chọn
-                                    lọc từ khắp nơi trên thế giới
-                                </p>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                            <div className="space-y-6">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.6 }}
+                                    className="flex flex-col items-start justify-center space-y-4"
+                                >
+                                    <div className="space-y-2">
+                                        <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                                            Điểm Đến Nổi Bật
+                                        </h2>
+                                        <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                                            Khám phá những điểm đến tuyệt đẹp
+                                            được chọn lọc từ khắp nơi trên thế
+                                            giới
+                                        </p>
+                                    </div>
+                                </motion.div>
+                            </div>
+                            <div className="relative h-[400px] rounded-2xl overflow-hidden shadow-2xl">
+                                <iframe
+                                    src="https://lottie.host/embed/d3469af0-8574-43e0-92a9-8f2d904cd177/QFZ4boVeLU.lottie"
+                                    className="w-full h-full"
+                                ></iframe>
                             </div>
                         </div>
-                        <FeaturedDestinations />
+                        <div className="mt-16">
+                            <FeaturedDestinations />
+                        </div>
                     </div>
                 </section>
 
-                <section className="py-24 bg-muted">
+                <section className="py-24 bg-muted" data-aos="fade-up">
                     <div className="container px-4 md:px-6">
-                        <div className="flex flex-col items-center justify-center space-y-4 text-center">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6 }}
+                            className="flex flex-col items-center justify-center space-y-4 text-center"
+                        >
                             <div className="space-y-2">
                                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
                                     Tour Phổ Biến
@@ -443,101 +518,103 @@ export default function Home() {
                                     nhiều nhất và đánh giá cao
                                 </p>
                             </div>
-                        </div>
+                        </motion.div>
                         <PopularTours />
                     </div>
                 </section>
 
-                <section className="py-24">
+                <section className="py-24" data-aos="fade-up">
                     <div className="container px-4 md:px-6">
-                        <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-                            <div className="flex flex-col justify-center space-y-4">
-                                <div className="space-y-2">
-                                    <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                                        Lập Kế Hoạch Tour Thông Minh với AI
-                                    </h2>
-                                    <p className="max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                                        Để AI tiên tiến của chúng tôi tạo lịch
-                                        trình hoàn hảo dựa trên sở thích, ngân
-                                        sách và phong cách du lịch của bạn.
-                                    </p>
-                                </div>
-                                <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                                    <Link
-                                        href="/planner"
-                                        className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                                    >
-                                        Try AI Planner
-                                    </Link>
-                                    <Link
-                                        href="/how-it-works"
-                                        className="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                                    >
-                                        Cách Hoạt Động
-                                    </Link>
-                                </div>
-                                <ul className="grid gap-2 py-4">
-                                    <li className="flex items-center gap-2">
-                                        <Badge
-                                            variant="outline"
-                                            className="rounded-full"
-                                        >
-                                            ✓
-                                        </Badge>
-                                        <span className="text-sm">
-                                            Đề xuất tour được cá nhân hóa
-                                        </span>
-                                    </li>
-                                    <li className="flex items-center gap-2">
-                                        <Badge
-                                            variant="outline"
-                                            className="rounded-full"
-                                        >
-                                            ✓
-                                        </Badge>
-                                        <span className="text-sm">
-                                            Tạo lịch trình thông minh với AI
-                                        </span>
-                                    </li>
-                                    <li className="flex items-center gap-2">
-                                        <Badge
-                                            variant="outline"
-                                            className="rounded-full"
-                                        >
-                                            ✓
-                                        </Badge>
-                                        <span className="text-sm">
-                                            Tính năng tối ưu hóa ngân sách
-                                        </span>
-                                    </li>
-                                    <li className="flex items-center gap-2">
-                                        <Badge
-                                            variant="outline"
-                                            className="rounded-full"
-                                        >
-                                            ✓
-                                        </Badge>
-                                        <span className="text-sm">
-                                            Thông tin địa phương và địa điểm ẩn
-                                        </span>
-                                    </li>
-                                </ul>
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6 }}
+                            className="flex flex-col items-center justify-center space-y-4 text-center"
+                        >
+                            <div className="space-y-2">
+                                <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
+                                    Tại Sao Chọn Chúng Tôi?
+                                </h2>
+                                <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                                    Chúng tôi cam kết mang đến trải nghiệm du
+                                    lịch tốt nhất cho bạn
+                                </p>
                             </div>
-                            <div className="relative h-[420px] overflow-hidden rounded-xl">
-                                <Image
-                                    src="/placeholder.svg?height=420&width=600"
-                                    alt="AI Tour Planner"
-                                    fill
-                                    className="object-cover"
-                                />
-                            </div>
-                        </div>
+                        </motion.div>
+                        <motion.div
+                            variants={staggerContainer}
+                            initial="initial"
+                            whileInView="animate"
+                            viewport={{ once: true }}
+                            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4 mt-8"
+                        >
+                            {[
+                                {
+                                    icon: <Shield className="h-8 w-8" />,
+                                    title: "An Toàn & Đáng Tin Cậy",
+                                    description:
+                                        "Đảm bảo an toàn tuyệt đối cho mọi hành trình của bạn",
+                                },
+                                {
+                                    icon: <CreditCard className="h-8 w-8" />,
+                                    title: "Giá Tốt Nhất",
+                                    description:
+                                        "Cam kết giá tốt nhất thị trường với nhiều ưu đãi hấp dẫn",
+                                },
+                                {
+                                    icon: <Headphones className="h-8 w-8" />,
+                                    title: "Hỗ Trợ 24/7",
+                                    description:
+                                        "Đội ngũ tư vấn viên luôn sẵn sàng hỗ trợ bạn mọi lúc",
+                                },
+                                {
+                                    icon: <ThumbsUp className="h-8 w-8" />,
+                                    title: "Hài Lòng 100%",
+                                    description:
+                                        "Cam kết hoàn tiền nếu bạn không hài lòng với dịch vụ",
+                                },
+                            ].map((item, i) => (
+                                <motion.div
+                                    key={i}
+                                    variants={fadeInUp}
+                                    whileHover={{ scale: 1.05 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    <Card className="text-center h-full">
+                                        <CardHeader>
+                                            <motion.div
+                                                whileHover={{ rotate: 360 }}
+                                                transition={{ duration: 0.5 }}
+                                                className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary"
+                                            >
+                                                {item.icon}
+                                            </motion.div>
+                                            <CardTitle className="mt-4">
+                                                {item.title}
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <CardContent>
+                                            <p className="text-muted-foreground">
+                                                {item.description}
+                                            </p>
+                                        </CardContent>
+                                    </Card>
+                                </motion.div>
+                            ))}
+                        </motion.div>
                     </div>
                 </section>
 
-                <section className="py-24 bg-muted">
+                <section className="py-24 bg-muted" data-aos="fade-up">
                     <div className="container px-4 md:px-6">
-                        <div className="flex flex-col items-center justify-center space-y-4 text-center">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6 }}
+                            className="flex flex-col items-center justify-center space-y-4 text-center"
+                        >
                             <div className="space-y-2">
                                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
                                     Khách Hàng Nói Gì Về Chúng Tôi
@@ -547,14 +624,20 @@ export default function Home() {
                                     của chúng tôi
                                 </p>
                             </div>
-                        </div>
+                        </motion.div>
                         <Testimonials />
                     </div>
                 </section>
 
-                <section className="py-24">
+                <section className="py-24" data-aos="fade-up">
                     <div className="container px-4 md:px-6">
-                        <div className="flex flex-col items-center justify-center space-y-4 text-center">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6 }}
+                            className="flex flex-col items-center justify-center space-y-4 text-center"
+                        >
                             <div className="space-y-2">
                                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
                                     Từ Blog Du Lịch Của Chúng Tôi
@@ -564,61 +647,80 @@ export default function Home() {
                                     từ các chuyên gia của chúng tôi
                                 </p>
                             </div>
-                        </div>
-                        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-8">
+                        </motion.div>
+                        <motion.div
+                            variants={staggerContainer}
+                            initial="initial"
+                            whileInView="animate"
+                            viewport={{ once: true }}
+                            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 mt-8"
+                        >
                             {[1, 2, 3].map((i) => (
-                                <Card key={i} className="overflow-hidden">
-                                    <div className="relative h-48">
-                                        <Image
-                                            src={`/placeholder.svg?height=200&width=400&text=Blog+${i}`}
-                                            alt={`Blog post ${i}`}
-                                            fill
-                                            className="object-cover"
-                                        />
-                                    </div>
-                                    <CardHeader>
-                                        <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                                            <span>15/05/2023</span>
-                                            <span>•</span>
-                                            <span>Mẹo Du Lịch</span>
+                                <motion.div
+                                    key={i}
+                                    variants={fadeInUp}
+                                    whileHover={{ y: -10 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    <Card className="overflow-hidden h-full">
+                                        <div className="relative h-48">
+                                            <Image
+                                                src={`/placeholder.svg?height=200&width=400&text=Blog+${i}`}
+                                                alt={`Blog post ${i}`}
+                                                fill
+                                                className="object-cover"
+                                            />
                                         </div>
-                                        <CardTitle className="line-clamp-2">
-                                            {i === 1 &&
-                                                "10 Địa Điểm Ẩn ở Đông Nam Á Bạn Phải Ghé Thăm"}
-                                            {i === 2 &&
-                                                "Cách Đóng Gói Hành Lý Chuyên Nghiệp: Mẹo Du Lịch Cần Thiết"}
-                                            {i === 3 &&
-                                                "Hướng Dẫn Tối Ưu Du Lịch Châu Âu Tiết Kiệm"}
-                                        </CardTitle>
-                                        <CardDescription className="line-clamp-2">
-                                            {i === 1 &&
-                                                "Khám phá những điểm đến ít người biết ở Đông Nam Á mang đến trải nghiệm chân thực, tránh xa đám đông du khách."}
-                                            {i === 2 &&
-                                                "Mẹo đóng gói hành lý từ chuyên gia giúp bạn du lịch nhẹ nhàng và hiệu quả cho mọi loại hành trình."}
-                                            {i === 3 &&
-                                                "Học cách khám phá Châu Âu với ngân sách tiết kiệm mà không ảnh hưởng đến trải nghiệm."}
-                                        </CardDescription>
-                                    </CardHeader>
-                                    <CardFooter>
-                                        <Link
-                                            href={`/blog/post-${i}`}
-                                            className="inline-flex items-center text-sm font-medium text-primary"
-                                        >
-                                            Read More
-                                            <ArrowRight className="ml-1 h-4 w-4" />
-                                        </Link>
-                                    </CardFooter>
-                                </Card>
+                                        <CardHeader>
+                                            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                                                <span>15/05/2023</span>
+                                                <span>•</span>
+                                                <span>Mẹo Du Lịch</span>
+                                            </div>
+                                            <CardTitle className="line-clamp-2">
+                                                {i === 1 &&
+                                                    "10 Địa Điểm Ẩn ở Đông Nam Á Bạn Phải Ghé Thăm"}
+                                                {i === 2 &&
+                                                    "Cách Đóng Gói Hành Lý Chuyên Nghiệp: Mẹo Du Lịch Cần Thiết"}
+                                                {i === 3 &&
+                                                    "Hướng Dẫn Tối Ưu Du Lịch Châu Âu Tiết Kiệm"}
+                                            </CardTitle>
+                                            <CardDescription className="line-clamp-2">
+                                                {i === 1 &&
+                                                    "Khám phá những điểm đến ít người biết ở Đông Nam Á mang đến trải nghiệm chân thực, tránh xa đám đông du khách."}
+                                                {i === 2 &&
+                                                    "Mẹo đóng gói hành lý từ chuyên gia giúp bạn du lịch nhẹ nhàng và hiệu quả cho mọi loại hành trình."}
+                                                {i === 3 &&
+                                                    "Học cách khám phá Châu Âu với ngân sách tiết kiệm mà không ảnh hưởng đến trải nghiệm."}
+                                            </CardDescription>
+                                        </CardHeader>
+                                        <CardFooter>
+                                            <Link
+                                                href={`/blog/post-${i}`}
+                                                className="inline-flex items-center text-sm font-medium text-primary"
+                                            >
+                                                Read More
+                                                <ArrowRight className="ml-1 h-4 w-4" />
+                                            </Link>
+                                        </CardFooter>
+                                    </Card>
+                                </motion.div>
                             ))}
-                        </div>
-                        <div className="flex justify-center mt-8">
+                        </motion.div>
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: true }}
+                            transition={{ duration: 0.6, delay: 0.2 }}
+                            className="flex justify-center mt-8"
+                        >
                             <Link
                                 href="/blog"
                                 className="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
                             >
                                 View All Articles
                             </Link>
-                        </div>
+                        </motion.div>
                     </div>
                 </section>
 

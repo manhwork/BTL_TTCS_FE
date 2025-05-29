@@ -83,18 +83,18 @@ export function Header() {
                                 >
                                     Tours
                                 </Link>
-                                <Link
+                                {/* <Link
                                     href="/hotels"
                                     className="group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-ocean-50 hover:text-ocean-700 transition-colors"
                                 >
                                     Hotels
-                                </Link>
-                                <Link
+                                </Link> */}
+                                {/* <Link
                                     href="/flights"
                                     className="group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-ocean-50 hover:text-ocean-700 transition-colors"
                                 >
                                     Flights
-                                </Link>
+                                </Link> */}
                                 <Link
                                     href="/planner"
                                     className="group flex items-center rounded-md px-3 py-2 text-sm font-medium hover:bg-ocean-50 hover:text-ocean-700 transition-colors"
@@ -180,7 +180,7 @@ export function Header() {
                         </DropdownMenuContent> */}
                     </DropdownMenu>
                     <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
+                        {/* <DropdownMenuTrigger asChild>
                             <Link href="/hotels">
                                 <Button
                                     variant="link"
@@ -189,7 +189,7 @@ export function Header() {
                                     Hotels
                                 </Button>
                             </Link>
-                        </DropdownMenuTrigger>
+                        </DropdownMenuTrigger> */}
                         {/* <DropdownMenuContent
                             align="center"
                             className="w-48 border-ocean-100"
@@ -227,19 +227,20 @@ export function Header() {
                                 </Link>
                             </DropdownMenuItem>
                         </DropdownMenuContent> */}
+                        <Link
+                            href="/planner"
+                            className="text-sm font-medium transition-colors hover:text-ocean-600"
+                        >
+                            AI Planner
+                        </Link>
                     </DropdownMenu>
-                    <Link
+                    {/* <Link
                         href="/flights"
                         className="text-sm font-medium transition-colors hover:text-ocean-600"
                     >
                         Flights
-                    </Link>
-                    <Link
-                        href="/planner"
-                        className="text-sm font-medium transition-colors hover:text-ocean-600"
-                    >
-                        AI Planner
-                    </Link>
+                    </Link> */}
+
                     <Link
                         href="/blog"
                         className="text-sm font-medium transition-colors hover:text-ocean-600"
@@ -247,16 +248,16 @@ export function Header() {
                         Blog
                     </Link>
                 </nav>
-                {/* <div className="flex items-center gap-2">
-                    <Button
+                <div className="flex items-center gap-2">
+                    {/* <Button
                         variant="ghost"
                         size="icon"
                         className="text-foreground hover:text-ocean-600 hover:bg-ocean-50"
                     >
                         <Search className="h-5 w-5" />
                         <span className="sr-only">Search</span>
-                    </Button>
-                    <Button
+                    </Button> */}
+                    {/* <Button
                         variant="ghost"
                         size="icon"
                         className="text-foreground hover:text-ocean-600 hover:bg-ocean-50 relative"
@@ -271,7 +272,7 @@ export function Header() {
                                 </span>
                             )}
                         </Link>
-                    </Button>
+                    </Button> */}
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button
@@ -334,7 +335,7 @@ export function Header() {
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
-                </div> */}
+                </div>
             </div>
         </header>
     );
