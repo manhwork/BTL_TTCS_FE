@@ -1,7 +1,6 @@
 "use client";
 
 import { AddToCartButton } from "@/components/cart/add-to-cart-button";
-import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -45,7 +44,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { use, useEffect, useState } from "react";
 
 interface Review {
     _id: string;
@@ -83,6 +82,7 @@ interface Tour {
 }
 
 export default function TourDetailPage({ params }: { params: { id: string } }) {
+    const { id } = use(params);
     const [date, setDate] = useState<Date>();
     const [travelers, setTravelers] = useState("2");
     const [isWishlisted, setIsWishlisted] = useState(false);
@@ -95,7 +95,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
         const fetchData = async () => {
             try {
                 setLoading(true);
-                const response = await getTour(params.id);
+                const response = await getTour(id);
                 console.log("[TourDetailPage] response", response);
                 if (isMounted) {
                     setData(response);
@@ -114,7 +114,8 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
         return () => {
             isMounted = false;
         };
-    }, [params.id]);
+    }, [id]);
+    const [mainImage, setMainImage] = useState(data?.images[0]);
 
     if (loading) {
         return (
@@ -132,11 +133,8 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
         );
     }
 
-    const [mainImage, setMainImage] = useState(data.images[0]);
-
     return (
         <div className="flex min-h-screen flex-col">
-            <Header />
             <main className="flex-1">
                 <section className="py-6 md:py-8">
                     <div className="container px-4 md:px-6">
@@ -158,7 +156,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                             href="/tours?category=island-hopping"
                                             className="text-sm text-muted-foreground hover:text-primary"
                                         >
-                                            Island Hopping
+                                            Du lịch đảo
                                         </Link>
                                         <span className="text-sm text-muted-foreground">
                                             /
@@ -177,7 +175,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                                 {data.average_rating}
                                             </span>
                                             <span className="text-muted-foreground">
-                                                ({data.reviews.length} reviews)
+                                                ({data.reviews.length} đánh giá)
                                             </span>
                                         </div>
                                         <div className="flex items-center text-muted-foreground">
@@ -189,12 +187,12 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                         <div className="flex items-center text-muted-foreground">
                                             <Clock className="mr-1 h-4 w-4" />
                                             <span>
-                                                {data.duration_days} days
+                                                {data.duration_days} ngày
                                             </span>
                                         </div>
                                         <div className="flex items-center text-muted-foreground">
                                             <Users className="mr-1 h-4 w-4" />
-                                            <span>Stock: {data.stock}</span>
+                                            <span>Số chỗ: {data.stock}</span>
                                         </div>
                                         <div className="flex items-center gap-2 ml-auto">
                                             <Button
@@ -219,7 +217,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                                     )}
                                                 />
                                                 <span className="sr-only">
-                                                    Add to wishlist
+                                                    Thêm vào yêu thích
                                                 </span>
                                             </Button>
                                             <Button
@@ -228,7 +226,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                             >
                                                 <Share2 className="h-4 w-4" />
                                                 <span className="sr-only">
-                                                    Share
+                                                    Chia sẻ
                                                 </span>
                                             </Button>
                                         </div>
@@ -285,10 +283,10 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                 >
                                     <TabsList className="grid w-full grid-cols-2">
                                         <TabsTrigger value="overview">
-                                            Overview
+                                            Tổng quan
                                         </TabsTrigger>
                                         <TabsTrigger value="reviews">
-                                            Reviews
+                                            Đánh giá
                                         </TabsTrigger>
                                     </TabsList>
 
@@ -299,7 +297,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                     >
                                         <div className="space-y-4">
                                             <h2 className="text-2xl font-bold">
-                                                Tour Overview
+                                                Tổng quan tour
                                             </h2>
                                             <p className="text-muted-foreground">
                                                 {data.information}
@@ -310,7 +308,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                             <Card>
                                                 <CardHeader>
                                                     <CardTitle className="text-lg">
-                                                        Tour Schedule
+                                                        Lịch trình
                                                     </CardTitle>
                                                 </CardHeader>
                                                 <CardContent className="pt-0">
@@ -321,7 +319,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                             <Card>
                                                 <CardHeader>
                                                     <CardTitle className="text-lg">
-                                                        Transportation
+                                                        Phương tiện di chuyển
                                                     </CardTitle>
                                                 </CardHeader>
                                                 <CardContent className="pt-0">
@@ -338,9 +336,9 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                     >
                                         <div className="flex items-center justify-between">
                                             <h2 className="text-2xl font-bold">
-                                                Customer Reviews
+                                                Đánh giá từ khách hàng
                                             </h2>
-                                            <Button>Write a Review</Button>
+                                            <Button>Viết đánh giá</Button>
                                         </div>
 
                                         <div className="grid gap-6 md:grid-cols-[1fr_2fr]">
@@ -368,12 +366,12 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                                                 )}
                                                             </div>
                                                             <div className="text-muted-foreground">
-                                                                Based on{" "}
+                                                                Dựa trên{" "}
                                                                 {
                                                                     data.reviews
                                                                         .length
                                                                 }{" "}
-                                                                reviews
+                                                                đánh giá
                                                             </div>
                                                         </div>
                                                     </div>
@@ -468,7 +466,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                                     variant="outline"
                                                     className="w-full"
                                                 >
-                                                    Load More Reviews
+                                                    Xem thêm đánh giá
                                                 </Button>
                                             </div>
                                         </div>
@@ -478,7 +476,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                 {/* Related Tours */}
                                 <div className="space-y-4">
                                     <h2 className="text-2xl font-bold">
-                                        You Might Also Like
+                                        Có thể bạn cũng thích
                                     </h2>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                                         {/* Related tours will be added later */}
@@ -488,12 +486,12 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
 
                             {/* Right Column - Booking */}
                             <div className="space-y-6">
-                                <Card className="sticky top-24">
+                                <Card className=" top-24">
                                     <CardHeader>
-                                        <CardTitle>Book This Tour</CardTitle>
+                                        <CardTitle>Đặt tour này</CardTitle>
                                         <CardDescription>
-                                            Select your preferred date and
-                                            travelers
+                                            Chọn ngày khởi hành và số lượng
+                                            khách
                                         </CardDescription>
                                     </CardHeader>
                                     <CardContent className="space-y-4">
@@ -517,7 +515,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                                 </span>
                                                 <span className="text-muted-foreground">
                                                     {" "}
-                                                    / person
+                                                    / người
                                                 </span>
                                             </div>
                                         </div>
@@ -526,7 +524,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
 
                                         <div className="space-y-2">
                                             <label className="text-sm font-medium">
-                                                Departure Date
+                                                Ngày khởi hành
                                             </label>
                                             <Popover>
                                                 <PopoverTrigger asChild>
@@ -544,7 +542,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                                                   date,
                                                                   "PPP"
                                                               )
-                                                            : "Select date"}
+                                                            : "Chọn ngày"}
                                                     </Button>
                                                 </PopoverTrigger>
                                                 <PopoverContent className="w-auto p-0">
@@ -569,33 +567,33 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
 
                                         <div className="space-y-2">
                                             <label className="text-sm font-medium">
-                                                Number of Travelers
+                                                Số lượng khách
                                             </label>
                                             <Select
                                                 value={travelers}
                                                 onValueChange={setTravelers}
                                             >
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Select travelers" />
+                                                    <SelectValue placeholder="Chọn số lượng khách" />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     <SelectItem value="1">
-                                                        1 Traveler
+                                                        1 khách
                                                     </SelectItem>
                                                     <SelectItem value="2">
-                                                        2 Travelers
+                                                        2 khách
                                                     </SelectItem>
                                                     <SelectItem value="3">
-                                                        3 Travelers
+                                                        3 khách
                                                     </SelectItem>
                                                     <SelectItem value="4">
-                                                        4 Travelers
+                                                        4 khách
                                                     </SelectItem>
                                                     <SelectItem value="5">
-                                                        5 Travelers
+                                                        5 khách
                                                     </SelectItem>
                                                     <SelectItem value="6">
-                                                        6 Travelers
+                                                        6 khách
                                                     </SelectItem>
                                                 </SelectContent>
                                             </Select>
@@ -603,15 +601,15 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
 
                                         <div className="space-y-2">
                                             <label className="text-sm font-medium">
-                                                Special Requests (Optional)
+                                                Yêu cầu đặc biệt (Tùy chọn)
                                             </label>
-                                            <Textarea placeholder="Any dietary requirements, accessibility needs, or special requests?" />
+                                            <Textarea placeholder="Bất kỳ yêu cầu về chế độ ăn uống, nhu cầu đặc biệt hoặc yêu cầu khác?" />
                                         </div>
 
                                         <div className="space-y-2">
                                             <div className="flex justify-between text-sm">
                                                 <span>
-                                                    Tour Price (per person)
+                                                    Giá tour (mỗi người)
                                                 </span>
                                                 <span>
                                                     {(
@@ -625,12 +623,12 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                                 </span>
                                             </div>
                                             <div className="flex justify-between text-sm">
-                                                <span>Travelers</span>
+                                                <span>Khách</span>
                                                 <span>x {travelers}</span>
                                             </div>
                                             <Separator />
                                             <div className="flex justify-between font-medium">
-                                                <span>Total</span>
+                                                <span>Tổng cộng</span>
                                                 <span>
                                                     {(
                                                         data.price *
@@ -647,7 +645,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                                 </span>
                                             </div>
                                             <div className="text-xs text-muted-foreground">
-                                                20% deposit required:{" "}
+                                                Đặt cọc 20%:{" "}
                                                 {(
                                                     data.price *
                                                     (1 - data.discount / 100) *
@@ -681,7 +679,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                                 variant="outline"
                                                 className="w-full"
                                             >
-                                                Book Now
+                                                Đặt ngay
                                             </Button>
                                         </div>
                                     </CardFooter>
@@ -690,7 +688,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                 <Card>
                                     <CardHeader>
                                         <CardTitle className="text-lg">
-                                            Need Help?
+                                            Cần hỗ trợ?
                                         </CardTitle>
                                     </CardHeader>
                                     <CardContent className="space-y-4">
@@ -700,11 +698,11 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                             </div>
                                             <div>
                                                 <div className="font-medium">
-                                                    Flexible Booking
+                                                    Đặt chỗ linh hoạt
                                                 </div>
                                                 <div className="text-sm text-muted-foreground">
-                                                    Free cancellation up to 30
-                                                    days before departure
+                                                    Hủy miễn phí trước 30 ngày
+                                                    khởi hành
                                                 </div>
                                             </div>
                                         </div>
@@ -714,11 +712,12 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                             </div>
                                             <div>
                                                 <div className="font-medium">
-                                                    Expert Guides
+                                                    Hướng dẫn viên chuyên nghiệp
                                                 </div>
                                                 <div className="text-sm text-muted-foreground">
-                                                    Local, English-speaking
-                                                    guides with deep knowledge
+                                                    Hướng dẫn viên địa phương,
+                                                    nói tiếng Anh với kiến thức
+                                                    sâu rộng
                                                 </div>
                                             </div>
                                         </div>
@@ -726,7 +725,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                             variant="outline"
                                             className="w-full"
                                         >
-                                            Contact Us
+                                            Liên hệ chúng tôi
                                         </Button>
                                     </CardContent>
                                 </Card>
@@ -735,7 +734,6 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                     </div>
                 </section>
             </main>
-            <Footer />
         </div>
     );
 }

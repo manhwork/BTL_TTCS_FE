@@ -1,3 +1,4 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -33,113 +34,97 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-// import { Header } from "@/components/header"
-// import { Footer } from "@/components/footer"
+import { useState, useEffect } from "react";
+import { getHotels } from "@/service/hotels";
+
+interface Hotel {
+    _id: string;
+    slug: string;
+    name: string;
+    description: string;
+    category: string;
+    parking_included: boolean;
+    street_address: string;
+    city: string;
+    state_province: string;
+    postal_code: string;
+    country: string;
+    lat: number;
+    lon: number;
+    status: string;
+    total_rooms: number;
+    average_rating: number;
+    position: number;
+}
+
+interface PaginationData {
+    totalRows: number;
+    totalPages: number;
+}
+
+interface HotelResponse {
+    hits: Hotel[];
+    pagination: PaginationData;
+}
 
 export default function HotelsPage() {
-    const hotels = [
-        {
-            id: 1,
-            name: "Grand Luxury Resort & Spa",
-            location: "Santorini, Greece",
-            rating: 4.9,
-            reviews: 328,
-            price: 299,
-            image: "/placeholder.svg?height=300&width=500&text=Luxury+Resort",
-            featured: true,
-            amenities: [
-                "Free WiFi",
-                "Breakfast",
-                "Restaurant",
-                "Fitness Center",
-            ],
-        },
-        {
-            id: 2,
-            name: "Oceanview Boutique Hotel",
-            location: "Bali, Indonesia",
-            rating: 4.7,
-            reviews: 196,
-            price: 149,
-            image: "/placeholder.svg?height=300&width=500&text=Boutique+Hotel",
-            featured: false,
-            amenities: ["Free WiFi", "Pool", "Restaurant", "Spa"],
-        },
-        {
-            id: 3,
-            name: "Cherry Blossom Inn",
-            location: "Kyoto, Japan",
-            rating: 4.8,
-            reviews: 252,
-            price: 179,
-            image: "/placeholder.svg?height=300&width=500&text=Cherry+Blossom+Inn",
-            featured: false,
-            amenities: ["Free WiFi", "Breakfast", "Garden", "Tea Ceremony"],
-        },
-        {
-            id: 4,
-            name: "Mountain View Lodge",
-            location: "Cusco, Peru",
-            rating: 4.6,
-            reviews: 189,
-            price: 129,
-            image: "/placeholder.svg?height=300&width=500&text=Mountain+Lodge",
-            featured: false,
-            amenities: ["Free WiFi", "Breakfast", "Restaurant", "Tours"],
-        },
-        {
-            id: 5,
-            name: "Safari Luxury Camp",
-            location: "Serengeti, Tanzania",
-            rating: 4.9,
-            reviews: 112,
-            price: 399,
-            image: "/placeholder.svg?height=300&width=500&text=Safari+Camp",
-            featured: false,
-            amenities: ["All-Inclusive", "Safari Tours", "Restaurant", "Pool"],
-        },
-        {
-            id: 6,
-            name: "Amalfi Seaside Hotel",
-            location: "Amalfi Coast, Italy",
-            rating: 4.8,
-            reviews: 176,
-            price: 219,
-            image: "/placeholder.svg?height=300&width=500&text=Amalfi+Hotel",
-            featured: false,
-            amenities: ["Free WiFi", "Breakfast", "Restaurant", "Beach Access"],
-        },
-    ];
+    const [data, setData] = useState<Hotel[]>([]);
+    const [pagination, setPagination] = useState<PaginationData>({
+        totalRows: 0,
+        totalPages: 0,
+    });
+    const [params, setParams] = useState<any>({});
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await getHotels(params);
+            if (response) {
+                setData(response.hits || []);
+                setPagination({
+                    totalRows: response.pagination?.totalRows || 0,
+                    totalPages: response.pagination?.totalPages || 0,
+                });
+            }
+        };
+        fetchData();
+    }, [params]);
 
     const getAmenityIcon = (amenity: string) => {
         switch (amenity) {
-            case "Free WiFi":
+            case "Wifi miễn phí":
                 return <Wifi className="h-4 w-4" />;
-            case "Breakfast":
+            case "Bữa sáng":
                 return <Coffee className="h-4 w-4" />;
-            case "Restaurant":
+            case "Nhà hàng":
                 return <Utensils className="h-4 w-4" />;
-            case "Fitness Center":
+            case "Phòng tập gym":
                 return <Dumbbell className="h-4 w-4" />;
             default:
                 return null;
         }
     };
 
+    const getAmenities = (hotel: Hotel) => {
+        const amenities = ["Wifi miễn phí"];
+        if (hotel.parking_included) {
+            amenities.push("Bãi đỗ xe miễn phí");
+        }
+        return amenities;
+    };
+
     return (
         <div className="flex min-h-screen flex-col">
-            {/* <Header /> */}
             <main className="flex-1">
                 <section className="py-12 md:py-16 lg:py-20">
                     <div className="container px-4 md:px-6">
                         <div className="flex flex-col items-center justify-center space-y-4 text-center">
                             <div className="space-y-2">
                                 <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                                    Find Your Perfect Stay
+                                    Tìm Nơi Lưu Trú Hoàn Hảo
                                 </h1>
                                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                                    Browse our selection of hotels, resorts, and
-                                    accommodations around the world
+                                    Khám phá các lựa chọn khách sạn, khu nghỉ
+                                    dưỡng và chỗ ở trên khắp thế giới
                                 </p>
                             </div>
                         </div>
@@ -147,30 +132,30 @@ export default function HotelsPage() {
                             <div className="md:w-1/4 space-y-6">
                                 <div className="space-y-4">
                                     <div className="flex items-center justify-between">
-                                        <h3 className="font-medium">Filters</h3>
+                                        <h3 className="font-medium">Bộ lọc</h3>
                                         <Button
                                             variant="ghost"
                                             size="sm"
                                             className="h-8 text-sm"
                                         >
-                                            Reset
+                                            Đặt lại
                                         </Button>
                                     </div>
                                     <div className="space-y-2">
-                                        <Label htmlFor="search">Search</Label>
+                                        <Label htmlFor="search">Tìm kiếm</Label>
                                         <div className="relative">
                                             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
                                             <Input
                                                 id="search"
                                                 type="search"
-                                                placeholder="Search hotels..."
+                                                placeholder="Tìm khách sạn..."
                                                 className="pl-8"
                                             />
                                         </div>
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Property Type</Label>
+                                    <Label>Loại chỗ ở</Label>
                                     <div className="space-y-2">
                                         <div className="flex items-center space-x-2">
                                             <Checkbox id="hotel" />
@@ -178,7 +163,7 @@ export default function HotelsPage() {
                                                 htmlFor="hotel"
                                                 className="font-normal"
                                             >
-                                                Hotel
+                                                Khách sạn
                                             </Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
@@ -187,7 +172,7 @@ export default function HotelsPage() {
                                                 htmlFor="resort"
                                                 className="font-normal"
                                             >
-                                                Resort
+                                                Khu nghỉ dưỡng
                                             </Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
@@ -196,7 +181,7 @@ export default function HotelsPage() {
                                                 htmlFor="villa"
                                                 className="font-normal"
                                             >
-                                                Villa
+                                                Biệt thự
                                             </Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
@@ -205,7 +190,7 @@ export default function HotelsPage() {
                                                 htmlFor="apartment"
                                                 className="font-normal"
                                             >
-                                                Apartment
+                                                Căn hộ
                                             </Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
@@ -214,13 +199,13 @@ export default function HotelsPage() {
                                                 htmlFor="boutique"
                                                 className="font-normal"
                                             >
-                                                Boutique
+                                                Khách sạn boutique
                                             </Label>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Amenities</Label>
+                                    <Label>Tiện nghi</Label>
                                     <div className="space-y-2">
                                         <div className="flex items-center space-x-2">
                                             <Checkbox id="wifi" />
@@ -228,7 +213,7 @@ export default function HotelsPage() {
                                                 htmlFor="wifi"
                                                 className="font-normal"
                                             >
-                                                Free WiFi
+                                                Wifi miễn phí
                                             </Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
@@ -237,7 +222,7 @@ export default function HotelsPage() {
                                                 htmlFor="breakfast"
                                                 className="font-normal"
                                             >
-                                                Breakfast Included
+                                                Bao gồm bữa sáng
                                             </Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
@@ -246,7 +231,7 @@ export default function HotelsPage() {
                                                 htmlFor="pool"
                                                 className="font-normal"
                                             >
-                                                Swimming Pool
+                                                Hồ bơi
                                             </Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
@@ -255,7 +240,7 @@ export default function HotelsPage() {
                                                 htmlFor="parking"
                                                 className="font-normal"
                                             >
-                                                Free Parking
+                                                Bãi đỗ xe miễn phí
                                             </Label>
                                         </div>
                                         <div className="flex items-center space-x-2">
@@ -264,70 +249,70 @@ export default function HotelsPage() {
                                                 htmlFor="pet-friendly"
                                                 className="font-normal"
                                             >
-                                                Pet Friendly
+                                                Cho phép thú cưng
                                             </Label>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Destinations</Label>
+                                    <Label>Điểm đến</Label>
                                     <Select>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="All destinations" />
+                                            <SelectValue placeholder="Tất cả điểm đến" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="all">
-                                                All destinations
+                                                Tất cả điểm đến
                                             </SelectItem>
                                             <SelectItem value="europe">
-                                                Europe
+                                                Châu Âu
                                             </SelectItem>
                                             <SelectItem value="asia">
-                                                Asia
+                                                Châu Á
                                             </SelectItem>
                                             <SelectItem value="africa">
-                                                Africa
+                                                Châu Phi
                                             </SelectItem>
                                             <SelectItem value="north-america">
-                                                North America
+                                                Bắc Mỹ
                                             </SelectItem>
                                             <SelectItem value="south-america">
-                                                South America
+                                                Nam Mỹ
                                             </SelectItem>
                                             <SelectItem value="oceania">
-                                                Oceania
+                                                Châu Đại Dương
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Star Rating</Label>
+                                    <Label>Xếp hạng sao</Label>
                                     <Select>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Any rating" />
+                                            <SelectValue placeholder="Mọi xếp hạng" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             <SelectItem value="any">
-                                                Any rating
+                                                Mọi xếp hạng
                                             </SelectItem>
                                             <SelectItem value="5">
-                                                5 Stars
+                                                5 sao
                                             </SelectItem>
                                             <SelectItem value="4">
-                                                4+ Stars
+                                                4+ sao
                                             </SelectItem>
                                             <SelectItem value="3">
-                                                3+ Stars
+                                                3+ sao
                                             </SelectItem>
                                             <SelectItem value="2">
-                                                2+ Stars
+                                                2+ sao
                                             </SelectItem>
                                         </SelectContent>
                                     </Select>
                                 </div>
                                 <div className="space-y-2">
                                     <div className="flex items-center justify-between">
-                                        <Label>Price Range (per night)</Label>
+                                        <Label>Khoảng giá (mỗi đêm)</Label>
                                         <span className="text-sm text-muted-foreground">
                                             $50 - $500
                                         </span>
@@ -341,14 +326,14 @@ export default function HotelsPage() {
                                 </div>
                                 <Button className="w-full">
                                     <Filter className="mr-2 h-4 w-4" />
-                                    Apply Filters
+                                    Áp dụng bộ lọc
                                 </Button>
                             </div>
                             <div className="md:w-3/4">
                                 <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
                                     <div className="mb-4 sm:mb-0">
                                         <p className="text-muted-foreground">
-                                            Showing {hotels.length} hotels
+                                            Hiển thị {data.length} khách sạn
                                         </p>
                                     </div>
                                     <div className="flex items-center gap-2">
@@ -356,51 +341,48 @@ export default function HotelsPage() {
                                             htmlFor="sort"
                                             className="whitespace-nowrap"
                                         >
-                                            Sort by:
+                                            Sắp xếp theo:
                                         </Label>
                                         <Select>
                                             <SelectTrigger
                                                 id="sort"
                                                 className="w-[180px]"
                                             >
-                                                <SelectValue placeholder="Recommended" />
+                                                <SelectValue placeholder="Đề xuất" />
                                             </SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="recommended">
-                                                    Recommended
+                                                    Đề xuất
                                                 </SelectItem>
                                                 <SelectItem value="price-low">
-                                                    Price: Low to High
+                                                    Giá: Thấp đến cao
                                                 </SelectItem>
                                                 <SelectItem value="price-high">
-                                                    Price: High to Low
+                                                    Giá: Cao đến thấp
                                                 </SelectItem>
                                                 <SelectItem value="rating">
-                                                    Rating
+                                                    Đánh giá
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                    {hotels.map((hotel) => (
+                                    {data.map((hotel) => (
                                         <Card
-                                            key={hotel.id}
+                                            key={hotel._id}
                                             className="overflow-hidden h-full flex flex-col"
                                         >
                                             <div className="relative h-48">
                                                 <Image
-                                                    src={
-                                                        hotel.image ||
-                                                        "/placeholder.svg"
-                                                    }
+                                                    src="/placeholder.svg?height=300&width=500&text=Hotel"
                                                     alt={hotel.name}
                                                     fill
                                                     className="object-cover"
                                                 />
-                                                {hotel.featured && (
+                                                {hotel.position <= 3 && (
                                                     <Badge className="absolute top-4 right-4 bg-primary">
-                                                        Featured
+                                                        Nổi bật
                                                     </Badge>
                                                 )}
                                             </div>
@@ -408,11 +390,8 @@ export default function HotelsPage() {
                                                 <div className="flex items-center gap-1 mb-2">
                                                     <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
                                                     <span className="font-medium">
-                                                        {hotel.rating}
-                                                    </span>
-                                                    <span className="text-muted-foreground text-sm">
-                                                        ({hotel.reviews}{" "}
-                                                        reviews)
+                                                        {hotel.average_rating ||
+                                                            0}
                                                     </span>
                                                 </div>
                                                 <h3 className="text-lg font-bold mb-2">
@@ -421,13 +400,13 @@ export default function HotelsPage() {
                                                 <div className="flex items-center text-muted-foreground mb-4">
                                                     <MapPin className="mr-1 h-4 w-4" />
                                                     <span>
-                                                        {hotel.location}
+                                                        {hotel.city},{" "}
+                                                        {hotel.country}
                                                     </span>
                                                 </div>
                                                 <div className="flex flex-wrap gap-2">
-                                                    {hotel.amenities
-                                                        .slice(0, 4)
-                                                        .map((amenity) => (
+                                                    {getAmenities(hotel).map(
+                                                        (amenity) => (
                                                             <Badge
                                                                 key={amenity}
                                                                 variant="outline"
@@ -440,24 +419,22 @@ export default function HotelsPage() {
                                                                     {amenity}
                                                                 </span>
                                                             </Badge>
-                                                        ))}
+                                                        )
+                                                    )}
                                                 </div>
                                             </CardContent>
                                             <CardFooter className="p-4 pt-0 flex items-center justify-between">
                                                 <div>
                                                     <span className="text-lg font-bold">
-                                                        ${hotel.price}
-                                                    </span>
-                                                    <span className="text-muted-foreground text-sm">
-                                                        {" "}
-                                                        / night
+                                                        {hotel.total_rooms}{" "}
+                                                        phòng
                                                     </span>
                                                 </div>
                                                 <Button asChild size="sm">
                                                     <Link
-                                                        href={`/hotels/${hotel.id}`}
+                                                        href={`/hotels/${hotel._id}`}
                                                     >
-                                                        View Details
+                                                        Xem chi tiết
                                                     </Link>
                                                 </Button>
                                             </CardFooter>
@@ -502,7 +479,6 @@ export default function HotelsPage() {
                     </div>
                 </section>
             </main>
-            {/* <Footer /> */}
         </div>
     );
 }
