@@ -1,9 +1,20 @@
 "use client";
 
+import { FeaturedDestinations } from "@/components/featured-destinations";
+import { Newsletter } from "@/components/newsletter";
+import { PopularTours } from "@/components/popular-tours";
+import { Testimonials } from "@/components/testimonials";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Calendar } from "@/components/ui/calendar";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
     Popover,
     PopoverContent,
@@ -16,71 +27,80 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import {
-    CalendarIcon,
-    MapPin,
-    Plane,
-    Hotel,
-    Globe,
-    Search,
-    ArrowRight,
-    Star,
-    Clock,
-    Users,
-    Shield,
-    Headphones,
-    CreditCard,
-    ThumbsUp,
-} from "lucide-react";
-import { format } from "date-fns";
-import { useState, useEffect } from "react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
-import Image from "next/image";
-import Link from "next/link";
-import { FeaturedDestinations } from "@/components/featured-destinations";
-import { PopularTours } from "@/components/popular-tours";
-import { Testimonials } from "@/components/testimonials";
-import { Newsletter } from "@/components/newsletter";
-import { motion } from "framer-motion";
 import AOS from "aos";
 import "aos/dist/aos.css";
+import { format } from "date-fns";
+import { motion } from "framer-motion";
+import {
+    ArrowRight,
+    CalendarIcon,
+    CreditCard,
+    Globe,
+    Headphones,
+    Search,
+    Shield,
+    ThumbsUp,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function Home() {
     const [date, setDate] = useState<Date>();
+    const [isLoaded, setIsLoaded] = useState(false);
 
     useEffect(() => {
+        setIsLoaded(true);
         AOS.init({
             duration: 1000,
-            once: true,
+            once: false,
+            mirror: true,
             easing: "ease-in-out",
+            offset: 100,
+            delay: 0,
+            anchorPlacement: "top-bottom",
+            disable: "mobile",
         });
     }, []);
 
     const fadeInUp = {
         initial: { opacity: 0, y: 60 },
         animate: { opacity: 1, y: 0 },
-        transition: { duration: 1.5 },
+        transition: { duration: 2 },
     };
 
     const staggerContainer = {
         animate: {
             transition: {
-                staggerChildren: 0.1,
+                staggerChildren: 0.5,
             },
         },
     };
 
+    if (!isLoaded) {
+        return (
+            <div className="flex items-center justify-center min-h-screen">
+                <motion.div
+                    initial={{ scale: 0.5, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    transition={{ duration: 0.5 }}
+                    className="text-4xl font-bold"
+                >
+                    Loading...
+                </motion.div>
+            </div>
+        );
+    }
+
     return (
-        <div className="flex min-h-screen flex-col">
+        <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 1 }}
+            className="flex min-h-screen flex-col"
+        >
             {/* <Header /> */}
             <main className="flex-1">
                 <section className="relative">
@@ -146,20 +166,6 @@ export default function Home() {
                                                 <Globe className="mr-2 h-4 w-4" />
                                                 Tour
                                             </TabsTrigger>
-                                            {/* <TabsTrigger
-                                                value="hotels"
-                                                className="data-[state=active]:bg-background"
-                                            >
-                                                <Hotel className="mr-2 h-4 w-4" />
-                                                Khách Sạn
-                                            </TabsTrigger> */}
-                                            {/* <TabsTrigger
-                                                value="flights"
-                                                className="data-[state=active]:bg-background"
-                                            >
-                                                <Plane className="mr-2 h-4 w-4" />
-                                                Chuyến Bay
-                                            </TabsTrigger> */}
                                         </TabsList>
                                         <TabsContent
                                             value="tours"
@@ -244,216 +250,6 @@ export default function Home() {
                                                 </div>
                                             </div>
                                         </TabsContent>
-                                        <TabsContent
-                                            value="hotels"
-                                            className="p-6"
-                                        >
-                                            <div className="grid gap-4 md:grid-cols-4">
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                                        Điểm Đến
-                                                    </label>
-                                                    <Input placeholder="Tên thành phố hoặc khách sạn" />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                                        Nhận Phòng / Trả Phòng
-                                                    </label>
-                                                    <Popover>
-                                                        <PopoverTrigger asChild>
-                                                            <Button
-                                                                variant={
-                                                                    "outline"
-                                                                }
-                                                                className={cn(
-                                                                    "w-full justify-start text-left font-normal",
-                                                                    !date &&
-                                                                        "text-muted-foreground"
-                                                                )}
-                                                            >
-                                                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                                                {date
-                                                                    ? format(
-                                                                          date,
-                                                                          "PPP"
-                                                                      )
-                                                                    : "Chọn ngày"}
-                                                            </Button>
-                                                        </PopoverTrigger>
-                                                        <PopoverContent className="w-auto p-0">
-                                                            <Calendar
-                                                                mode="single"
-                                                                selected={date}
-                                                                onSelect={
-                                                                    setDate
-                                                                }
-                                                                initialFocus
-                                                            />
-                                                        </PopoverContent>
-                                                    </Popover>
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                                        Khách & Phòng
-                                                    </label>
-                                                    <Select>
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder="Chọn số khách và phòng" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectItem value="1-1">
-                                                                1 Khách, 1 Phòng
-                                                            </SelectItem>
-                                                            <SelectItem value="2-1">
-                                                                2 Khách, 1 Phòng
-                                                            </SelectItem>
-                                                            <SelectItem value="2-2">
-                                                                2 Khách, 2 Phòng
-                                                            </SelectItem>
-                                                            <SelectItem value="4-2">
-                                                                4 Khách, 2 Phòng
-                                                            </SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
-                                                </div>
-                                                <div className="flex items-end">
-                                                    <Button className="w-full">
-                                                        <Search className="mr-2 h-4 w-4" />
-                                                        Tìm khách sạn
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        </TabsContent>
-                                        <TabsContent
-                                            value="flights"
-                                            className="p-6"
-                                        >
-                                            <div className="grid gap-4 md:grid-cols-4">
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                                        Đi Từ
-                                                    </label>
-                                                    <Input placeholder="Thành phố hoặc sân bay khởi hành" />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                                        Đến
-                                                    </label>
-                                                    <Input placeholder="Thành phố hoặc sân bay đến" />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                                        Ngày Khởi Hành
-                                                    </label>
-                                                    <Popover>
-                                                        <PopoverTrigger asChild>
-                                                            <Button
-                                                                variant={
-                                                                    "outline"
-                                                                }
-                                                                className={cn(
-                                                                    "w-full justify-start text-left font-normal",
-                                                                    !date &&
-                                                                        "text-muted-foreground"
-                                                                )}
-                                                            >
-                                                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                                                {date
-                                                                    ? format(
-                                                                          date,
-                                                                          "PPP"
-                                                                      )
-                                                                    : "Chọn ngày"}
-                                                            </Button>
-                                                        </PopoverTrigger>
-                                                        <PopoverContent className="w-auto p-0">
-                                                            <Calendar
-                                                                mode="single"
-                                                                selected={date}
-                                                                onSelect={
-                                                                    setDate
-                                                                }
-                                                                initialFocus
-                                                            />
-                                                        </PopoverContent>
-                                                    </Popover>
-                                                </div>
-                                                <div className="flex items-end">
-                                                    <Button className="w-full">
-                                                        <Search className="mr-2 h-4 w-4" />
-                                                        Tìm chuyến bay
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        </TabsContent>
-                                        <TabsContent
-                                            value="planner"
-                                            className="p-6"
-                                        >
-                                            <div className="grid gap-4 md:grid-cols-4">
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                                        Điểm Đến
-                                                    </label>
-                                                    <Input placeholder="Bạn muốn đi đâu?" />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                                        Thời Gian Du Lịch
-                                                    </label>
-                                                    <Select>
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder="Chọn thời gian" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectItem value="weekend">
-                                                                Cuối Tuần (2-3
-                                                                ngày)
-                                                            </SelectItem>
-                                                            <SelectItem value="week">
-                                                                Một Tuần (5-7
-                                                                ngày)
-                                                            </SelectItem>
-                                                            <SelectItem value="twoweeks">
-                                                                Hai Tuần (12-14
-                                                                ngày)
-                                                            </SelectItem>
-                                                            <SelectItem value="month">
-                                                                Một Tháng (28-30
-                                                                ngày)
-                                                            </SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                                        Ngân Sách
-                                                    </label>
-                                                    <Select>
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder="Chọn ngân sách" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectItem value="budget">
-                                                                Tiết Kiệm
-                                                            </SelectItem>
-                                                            <SelectItem value="moderate">
-                                                                Trung Bình
-                                                            </SelectItem>
-                                                            <SelectItem value="luxury">
-                                                                Cao Cấp
-                                                            </SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
-                                                </div>
-                                                <div className="flex items-end">
-                                                    <Button className="w-full">
-                                                        <Search className="mr-2 h-4 w-4" />
-                                                        Plan My Trip
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        </TabsContent>
                                     </Tabs>
                                 </CardContent>
                             </Card>
@@ -464,6 +260,9 @@ export default function Home() {
                 <section
                     className="py-24 mt-24 bg-gradient-to-b from-background to-muted"
                     data-aos="fade-up"
+                    data-aos-mirror="true"
+                    data-aos-anchor-placement="top-bottom"
+                    data-aos-duration="1000"
                 >
                     <div className="container px-4 md:px-6">
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
@@ -471,7 +270,7 @@ export default function Home() {
                                 <motion.div
                                     initial={{ opacity: 0, y: 20 }}
                                     whileInView={{ opacity: 1, y: 0 }}
-                                    viewport={{ once: true }}
+                                    viewport={{ once: false, amount: 0.3 }}
                                     transition={{ duration: 0.6 }}
                                     className="flex flex-col items-start justify-center space-y-4"
                                 >
@@ -494,9 +293,14 @@ export default function Home() {
                                 ></iframe>
                             </div>
                         </div>
-                        <div className="mt-16">
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
+                            viewport={{ once: false, amount: 0.3 }}
+                            transition={{ duration: 0.6 }}
+                        >
                             <FeaturedDestinations />
-                        </div>
+                        </motion.div>
                     </div>
                 </section>
 
@@ -727,6 +531,6 @@ export default function Home() {
                 <Newsletter />
             </main>
             {/* <Footer /> */}
-        </div>
+        </motion.div>
     );
 }
