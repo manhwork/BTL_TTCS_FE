@@ -220,28 +220,10 @@ export default function Home() {
                                                     <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                                                         Số Người
                                                     </label>
-                                                    <Select>
-                                                        <SelectTrigger>
-                                                            <SelectValue placeholder="Số người đi" />
-                                                        </SelectTrigger>
-                                                        <SelectContent>
-                                                            <SelectItem value="1">
-                                                                1 Người
-                                                            </SelectItem>
-                                                            <SelectItem value="2">
-                                                                2 Người
-                                                            </SelectItem>
-                                                            <SelectItem value="3">
-                                                                3 Người
-                                                            </SelectItem>
-                                                            <SelectItem value="4">
-                                                                4 Người
-                                                            </SelectItem>
-                                                            <SelectItem value="5+">
-                                                                5+ Người
-                                                            </SelectItem>
-                                                        </SelectContent>
-                                                    </Select>
+                                                    <Input
+                                                        type="text"
+                                                        placeholder="Số người đi"
+                                                    />
                                                 </div>
                                                 <div className="flex items-end">
                                                     <Button className="w-full">

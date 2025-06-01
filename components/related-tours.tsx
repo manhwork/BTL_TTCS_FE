@@ -60,9 +60,9 @@ export function RelatedTours({ currentTourId, category }: RelatedToursProps) {
                                 />
                             </div>
                             <div className="p-4">
-                                <h3 className="font-semibold line-clamp-1 mb-2">
+                                <div className="font-semibold line-clamp-1 mb-2">
                                     {tour.title}
-                                </h3>
+                                </div>
                                 <div className="flex items-center gap-2 text-sm text-muted-foreground">
                                     <MapPin className="w-4 h-4" />
                                     <span className="line-clamp-1">

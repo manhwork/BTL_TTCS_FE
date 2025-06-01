@@ -14,6 +14,8 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { SuccessModal } from "./success-modal";
+import { createBooking, BookingTourRequest } from "@/service/tours";
+import { toast } from "sonner";
 
 interface BookingModalProps {
     isOpen: boolean;
@@ -22,6 +24,7 @@ interface BookingModalProps {
     tourPrice: number;
     travelers: number;
     date?: Date;
+    tourId: string;
 }
 
 export function BookingModal({
@@ -31,6 +34,7 @@ export function BookingModal({
     tourPrice,
     travelers,
     date,
+    tourId,
 }: BookingModalProps) {
     const [formData, setFormData] = useState({
         fullName: "",
@@ -40,33 +44,54 @@ export function BookingModal({
         additionalRequest: "",
     });
     const [isSuccessModalOpen, setIsSuccessModalOpen] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            // TODO: Xử lý gửi form
-            console.log("Form data:", formData);
+            setIsLoading(true);
+
+            const bookingData: BookingTourRequest = {
+                tour_id: tourId,
+                start_date: date
+                    ? date.toISOString().split("T")[0]
+                    : new Date().toISOString().split("T")[0],
+                number_of_people: travelers,
+                contact_info: {
+                    name: formData.fullName,
+                    phone: formData.phone,
+                    email: formData.email,
+                },
+                note: formData.note,
+                total_price: tourPrice * travelers,
+            };
+
+            await createBooking(bookingData);
 
             // Đóng modal đặt tour
             onClose();
 
             // Hiển thị modal thành công
             setIsSuccessModalOpen(true);
+
+            // Reset form data
+            setFormData({
+                fullName: "",
+                phone: "",
+                email: "",
+                note: "",
+                additionalRequest: "",
+            });
         } catch (error) {
             console.error("Error submitting form:", error);
+            toast.error("Có lỗi xảy ra khi đặt tour. Vui lòng thử lại sau.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
     const handleCloseSuccessModal = () => {
         setIsSuccessModalOpen(false);
-        // Reset form data
-        setFormData({
-            fullName: "",
-            phone: "",
-            email: "",
-            note: "",
-            additionalRequest: "",
-        });
     };
 
     return (
@@ -180,10 +205,13 @@ export function BookingModal({
                                 type="button"
                                 variant="outline"
                                 onClick={onClose}
+                                disabled={isLoading}
                             >
                                 Hủy
                             </Button>
-                            <Button type="submit">Gửi yêu cầu</Button>
+                            <Button type="submit" disabled={isLoading}>
+                                {isLoading ? "Đang xử lý..." : "Gửi yêu cầu"}
+                            </Button>
                         </DialogFooter>
                     </form>
                 </DialogContent>

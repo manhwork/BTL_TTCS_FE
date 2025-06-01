@@ -1,7 +1,7 @@
 "use client";
 
-import { AddToCartButton } from "@/components/cart/add-to-cart-button";
-import { Header } from "@/components/header";
+import { BookingModal } from "@/components/booking-modal";
+import { RelatedTours } from "@/components/related-tours";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -13,21 +13,14 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
 import { getTour } from "@/service/tours";
 import { format } from "date-fns";
@@ -45,9 +38,28 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
-import { RelatedTours } from "@/components/related-tours";
-import { BookingModal } from "@/components/booking-modal";
 
+export const getLobelTransportation = (transportation: string) => {
+    switch (transportation) {
+        case "car":
+            return "Xe hơi";
+        case "boat":
+            return "Thuyền";
+        case "plane":
+            return "Máy bay";
+        case "train":
+            return "Tàu hỏa";
+        case "bus":
+            return "Xe bus";
+        case "motorcycle":
+            return "Xe máy";
+        case "bicycle":
+            return "Xe đạp";
+
+        default:
+            return transportation;
+    }
+};
 interface Review {
     _id: string;
     name: string;
@@ -91,6 +103,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
     const [data, setData] = useState<Tour | null>(null);
     const [loading, setLoading] = useState(true);
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+    const [mainImage, setMainImage] = useState();
 
     useEffect(() => {
         let isMounted = true;
@@ -102,6 +115,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                 console.log("[TourDetailPage] response", response);
                 if (isMounted) {
                     setData(response);
+                    setMainImage(response.images[0]);
                 }
             } catch (error) {
                 console.error("Error fetching tour:", error);
@@ -118,7 +132,6 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
             isMounted = false;
         };
     }, [id]);
-    const [mainImage, setMainImage] = useState(data?.images[0]);
 
     if (loading) {
         return (
@@ -326,7 +339,11 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                                     </CardTitle>
                                                 </CardHeader>
                                                 <CardContent className="pt-0">
-                                                    <p>{data.transportation}</p>
+                                                    <p>
+                                                        {getLobelTransportation(
+                                                            data.transportation
+                                                        )}
+                                                    </p>
                                                 </CardContent>
                                             </Card>
                                         </div>
@@ -564,41 +581,13 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                             <label className="text-sm font-medium">
                                                 Số lượng khách
                                             </label>
-                                            <Select
+                                            <Input
+                                                type="number"
                                                 value={travelers}
-                                                onValueChange={setTravelers}
-                                            >
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Chọn số lượng khách" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="1">
-                                                        1 khách
-                                                    </SelectItem>
-                                                    <SelectItem value="2">
-                                                        2 khách
-                                                    </SelectItem>
-                                                    <SelectItem value="3">
-                                                        3 khách
-                                                    </SelectItem>
-                                                    <SelectItem value="4">
-                                                        4 khách
-                                                    </SelectItem>
-                                                    <SelectItem value="5">
-                                                        5 khách
-                                                    </SelectItem>
-                                                    <SelectItem value="6">
-                                                        6 khách
-                                                    </SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </div>
-
-                                        <div className="space-y-2">
-                                            <label className="text-sm font-medium">
-                                                Yêu cầu đặc biệt (Tùy chọn)
-                                            </label>
-                                            <Textarea placeholder="Bất kỳ yêu cầu về chế độ ăn uống, nhu cầu đặc biệt hoặc yêu cầu khác?" />
+                                                onChange={(e) =>
+                                                    setTravelers(e.target.value)
+                                                }
+                                            />
                                         </div>
 
                                         <div className="space-y-2">
@@ -639,37 +628,10 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                                     VND
                                                 </span>
                                             </div>
-                                            {/* <div className="text-xs text-muted-foreground">
-                                                Đặt cọc 20%:{" "}
-                                                {(
-                                                    data.price *
-                                                    (1 - data.discount / 100) *
-                                                    Number.parseInt(travelers) *
-                                                    0.2
-                                                ).toLocaleString("vi-VN")}{" "}
-                                                VND
-                                            </div> */}
                                         </div>
                                     </CardContent>
                                     <CardFooter className="flex flex-col gap-2">
                                         <div className="flex flex-col gap-4 ">
-                                            {/* <AddToCartButton
-                                                item={{
-                                                    id: data._id,
-                                                    type: "tour",
-                                                    name: data.title,
-                                                    image: data.images[0],
-                                                    price:
-                                                        data.price *
-                                                        (1 -
-                                                            data.discount /
-                                                                100),
-                                                    duration: `${data.duration_days} days`,
-                                                    location:
-                                                        data.category_id.title,
-                                                }}
-                                                className="w-full"
-                                            /> */}
                                             <Button
                                                 variant="outline"
                                                 className="w-full bg-primary text-white"
@@ -737,6 +699,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                     }
                                     travelers={Number(travelers)}
                                     date={date}
+                                    tourId={data._id}
                                 />
                             </div>
                         </div>
