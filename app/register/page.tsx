@@ -1,3 +1,5 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -5,10 +7,59 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
 import { Facebook, Github, Globe, Twitter } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
+import { register } from "@/service/register";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 // import { Header } from "@/components/header"
 // import { Footer } from "@/components/footer"
 
 export default function RegisterPage() {
+    const router = useRouter();
+    const [loading, setLoading] = useState(false);
+    const [formData, setFormData] = useState({
+        fullName: "",
+        email: "",
+        password: "",
+        confirmPassword: "",
+        phone: "",
+        avatar: "",
+        role_id: "staff", // Mặc định là user
+        status: "active", // Mặc định là active
+    });
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+
+        // Kiểm tra mật khẩu
+        if (formData.password !== formData.confirmPassword) {
+            toast.error("Mật khẩu xác nhận không khớp!");
+            return;
+        }
+
+        try {
+            setLoading(true);
+            await register(
+                formData.fullName,
+                formData.email,
+                formData.password,
+                formData.confirmPassword,
+                formData.phone,
+                formData.avatar,
+                formData.role_id,
+                formData.status
+            );
+
+            toast.success("Đăng ký thành công!");
+            // Chuyển hướng về trang đăng nhập
+            window.location.href = "/login";
+        } catch (error: any) {
+            toast.error(error.response?.data?.message || "Đăng ký thất bại!");
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return (
         <div className="flex min-h-screen flex-col">
             {/* <Header /> */}
@@ -24,24 +75,27 @@ export default function RegisterPage() {
                                 <span className="font-bold">TravelEase</span>
                             </Link>
                             <h1 className="text-3xl font-bold">
-                                Create an account
+                                Tạo tài khoản
                             </h1>
                             <p className="text-sm text-muted-foreground">
-                                Enter your information to create an account
+                                Nhập thông tin của bạn để tạo tài khoản
                             </p>
                         </div>
-                        <div className="grid gap-4">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="grid gap-2">
-                                    <Label htmlFor="first-name">
-                                        First name
-                                    </Label>
-                                    <Input id="first-name" placeholder="John" />
-                                </div>
-                                <div className="grid gap-2">
-                                    <Label htmlFor="last-name">Last name</Label>
-                                    <Input id="last-name" placeholder="Doe" />
-                                </div>
+                        <form onSubmit={handleSubmit} className="grid gap-4">
+                            <div className="grid gap-2">
+                                <Label htmlFor="fullName">Họ và tên</Label>
+                                <Input
+                                    id="fullName"
+                                    placeholder="Nguyễn Văn A"
+                                    value={formData.fullName}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            fullName: e.target.value,
+                                        })
+                                    }
+                                    required
+                                />
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="email">Email</Label>
@@ -49,48 +103,113 @@ export default function RegisterPage() {
                                     id="email"
                                     type="email"
                                     placeholder="name@example.com"
+                                    value={formData.email}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            email: e.target.value,
+                                        })
+                                    }
+                                    required
                                 />
                             </div>
                             <div className="grid gap-2">
-                                <Label htmlFor="password">Password</Label>
-                                <Input id="password" type="password" />
+                                <Label htmlFor="phone">Số điện thoại</Label>
+                                <Input
+                                    id="phone"
+                                    type="tel"
+                                    placeholder="0123456789"
+                                    value={formData.phone}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            phone: e.target.value,
+                                        })
+                                    }
+                                    required
+                                />
+                            </div>
+                            {/* <div className="grid gap-2">
+                                <Label htmlFor="avatar">Avatar URL</Label>
+                                <Input
+                                    id="avatar"
+                                    type="text"
+                                    placeholder="https://example.com/avatar.jpg"
+                                    value={formData.avatar}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            avatar: e.target.value,
+                                        })
+                                    }
+                                />
+                            </div> */}
+                            <div className="grid gap-2">
+                                <Label htmlFor="password">Mật khẩu</Label>
+                                <Input
+                                    id="password"
+                                    type="password"
+                                    value={formData.password}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            password: e.target.value,
+                                        })
+                                    }
+                                    required
+                                />
                             </div>
                             <div className="grid gap-2">
                                 <Label htmlFor="confirm-password">
-                                    Confirm Password
+                                    Xác nhận mật khẩu
                                 </Label>
-                                <Input id="confirm-password" type="password" />
+                                <Input
+                                    id="confirm-password"
+                                    type="password"
+                                    value={formData.confirmPassword}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            confirmPassword: e.target.value,
+                                        })
+                                    }
+                                    required
+                                />
                             </div>
                             <div className="flex items-center space-x-2">
-                                <Checkbox id="terms" />
+                                <Checkbox id="terms" required />
                                 <Label
                                     htmlFor="terms"
                                     className="text-sm font-normal"
                                 >
-                                    I agree to the{" "}
+                                    Tôi đồng ý với{" "}
                                     <Link
                                         href="/terms"
                                         className="text-primary underline-offset-4 hover:underline"
                                     >
-                                        Terms of Service
+                                        Điều khoản dịch vụ
                                     </Link>{" "}
-                                    and{" "}
+                                    và{" "}
                                     <Link
                                         href="/privacy"
                                         className="text-primary underline-offset-4 hover:underline"
                                     >
-                                        Privacy Policy
+                                        Chính sách bảo mật
                                     </Link>
                                 </Label>
                             </div>
-                            <Button type="submit" className="w-full">
-                                Create Account
+                            <Button
+                                type="submit"
+                                className="w-full"
+                                disabled={loading}
+                            >
+                                {loading ? "Đang xử lý..." : "Đăng ký"}
                             </Button>
-                        </div>
+                        </form>
                         <div className="relative flex items-center justify-center">
                             <Separator className="w-full" />
                             <div className="absolute bg-background px-2 text-xs text-muted-foreground">
-                                OR CONTINUE WITH
+                                HOẶC TIẾP TỤC VỚI
                             </div>
                         </div>
                         <div className="grid grid-cols-3 gap-2">
@@ -108,12 +227,12 @@ export default function RegisterPage() {
                             </Button>
                         </div>
                         <div className="text-center text-sm">
-                            Already have an account?{" "}
+                            Đã có tài khoản?{" "}
                             <Link
                                 href="/login"
                                 className="text-primary underline-offset-4 hover:underline"
                             >
-                                Sign in
+                                Đăng nhập
                             </Link>
                         </div>
                     </div>
