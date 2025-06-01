@@ -247,6 +247,12 @@ export function Header() {
                     >
                         Blog
                     </Link>
+                    <Link
+                        href="/about"
+                        className="text-sm font-medium transition-colors hover:text-ocean-600"
+                    >
+                        About
+                    </Link>
                 </nav>
                 <div className="flex items-center gap-2">
                     {/* <Button
