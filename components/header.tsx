@@ -175,17 +175,7 @@ export function Header() {
                         size="icon"
                         className="text-foreground hover:text-ocean-600 hover:bg-ocean-50 relative"
                         asChild
-                    >
-                        <Link href="/cart">
-                            <ShoppingCart className="h-5 w-5" />
-                            <span className="sr-only">Cart</span>
-                            {cartCount > 0 && (
-                                <span className="absolute -top-1 -right-1 bg-sunset-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center animate-pulse-gentle">
-                                    {cartCount}
-                                </span>
-                            )}
-                        </Link>
-                    </Button>
+                    ></Button>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button
