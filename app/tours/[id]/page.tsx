@@ -34,10 +34,22 @@ import {
     Share2,
     Star,
     Users,
+    Pencil,
+    Trash2,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
+import { getCookie } from "@/lib/cookies";
+import { toast } from "sonner";
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 export const getLobelTransportation = (transportation: string) => {
     switch (transportation) {
@@ -67,6 +79,7 @@ interface Review {
     date: string;
     rating: number;
     comment: string;
+    user_id?: string;
 }
 
 interface Tour {
@@ -104,6 +117,12 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
     const [loading, setLoading] = useState(true);
     const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
     const [mainImage, setMainImage] = useState();
+    const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+    const [editingReview, setEditingReview] = useState<Review | null>(null);
+    const [userReview, setUserReview] = useState<Review | null>(null);
+    const [selectedRating, setSelectedRating] = useState(
+        editingReview?.rating || 0
+    );
 
     useEffect(() => {
         let isMounted = true;
@@ -132,6 +151,57 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
             isMounted = false;
         };
     }, [id]);
+
+    useEffect(() => {
+        if (data?.reviews) {
+            const userReview = data.reviews.find(
+                (review: Review) => review.user_id === getCookie("userId")
+            );
+            setUserReview(userReview || null);
+        }
+    }, [data]);
+
+    const handleAddReview = async (review: {
+        rating: number;
+        comment: string;
+    }) => {
+        try {
+            // TODO: Gọi API thêm đánh giá
+            toast.success("Thêm đánh giá thành công!");
+            setIsReviewModalOpen(false);
+        } catch (error: any) {
+            toast.error(
+                error.response?.data?.message || "Thêm đánh giá thất bại!"
+            );
+        }
+    };
+
+    const handleEditReview = async (review: {
+        rating: number;
+        comment: string;
+    }) => {
+        try {
+            // TODO: Gọi API sửa đánh giá
+            toast.success("Sửa đánh giá thành công!");
+            setIsReviewModalOpen(false);
+            setEditingReview(null);
+        } catch (error: any) {
+            toast.error(
+                error.response?.data?.message || "Sửa đánh giá thất bại!"
+            );
+        }
+    };
+
+    const handleDeleteReview = async (reviewId: string) => {
+        try {
+            // TODO: Gọi API xóa đánh giá
+            toast.success("Xóa đánh giá thành công!");
+        } catch (error: any) {
+            toast.error(
+                error.response?.data?.message || "Xóa đánh giá thất bại!"
+            );
+        }
+    };
 
     if (loading) {
         return (
@@ -358,7 +428,17 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                             <h2 className="text-2xl font-bold">
                                                 Đánh giá từ khách hàng
                                             </h2>
-                                            <Button>Viết đánh giá</Button>
+                                            {!userReview && (
+                                                <Button
+                                                    onClick={() =>
+                                                        setIsReviewModalOpen(
+                                                            true
+                                                        )
+                                                    }
+                                                >
+                                                    Viết đánh giá
+                                                </Button>
+                                            )}
                                         </div>
 
                                         <div className="grid gap-6 md:grid-cols-[1fr_2fr]">
@@ -400,7 +480,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
 
                                             <div className="space-y-4">
                                                 {data.reviews.map(
-                                                    (review: any) => (
+                                                    (review: Review) => (
                                                         <Card key={review._id}>
                                                             <CardContent className="p-6">
                                                                 <div className="flex items-start gap-4">
@@ -444,29 +524,63 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                                                                     }
                                                                                 </div>
                                                                             </div>
-                                                                            <div className="flex items-center">
-                                                                                {[
-                                                                                    ...Array(
-                                                                                        5
-                                                                                    ),
-                                                                                ].map(
-                                                                                    (
-                                                                                        _,
-                                                                                        i
-                                                                                    ) => (
-                                                                                        <Star
-                                                                                            key={
-                                                                                                i
+                                                                            <div className="flex items-center gap-2">
+                                                                                <div className="flex items-center">
+                                                                                    {[
+                                                                                        ...Array(
+                                                                                            5
+                                                                                        ),
+                                                                                    ].map(
+                                                                                        (
+                                                                                            _,
+                                                                                            i
+                                                                                        ) => (
+                                                                                            <Star
+                                                                                                key={
+                                                                                                    i
+                                                                                                }
+                                                                                                className={cn(
+                                                                                                    "h-4 w-4",
+                                                                                                    i <
+                                                                                                        review.rating
+                                                                                                        ? "fill-yellow-400 text-yellow-400"
+                                                                                                        : "text-muted"
+                                                                                                )}
+                                                                                            />
+                                                                                        )
+                                                                                    )}
+                                                                                </div>
+                                                                                {review.user_id ===
+                                                                                    getCookie(
+                                                                                        "userId"
+                                                                                    ) && (
+                                                                                    <div className="flex items-center gap-2">
+                                                                                        <Button
+                                                                                            variant="ghost"
+                                                                                            size="icon"
+                                                                                            onClick={() => {
+                                                                                                setEditingReview(
+                                                                                                    review
+                                                                                                );
+                                                                                                setIsReviewModalOpen(
+                                                                                                    true
+                                                                                                );
+                                                                                            }}
+                                                                                        >
+                                                                                            <Pencil className="h-4 w-4" />
+                                                                                        </Button>
+                                                                                        <Button
+                                                                                            variant="ghost"
+                                                                                            size="icon"
+                                                                                            onClick={() =>
+                                                                                                handleDeleteReview(
+                                                                                                    review._id
+                                                                                                )
                                                                                             }
-                                                                                            className={cn(
-                                                                                                "h-4 w-4",
-                                                                                                i <
-                                                                                                    review.rating
-                                                                                                    ? "fill-yellow-400 text-yellow-400"
-                                                                                                    : "text-muted"
-                                                                                            )}
-                                                                                        />
-                                                                                    )
+                                                                                        >
+                                                                                            <Trash2 className="h-4 w-4" />
+                                                                                        </Button>
+                                                                                    </div>
                                                                                 )}
                                                                             </div>
                                                                         </div>
@@ -706,6 +820,91 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                     </div>
                 </section>
             </main>
+
+            {/* Review Modal */}
+            <Dialog
+                open={isReviewModalOpen}
+                onOpenChange={setIsReviewModalOpen}
+            >
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>
+                            {editingReview ? "Sửa đánh giá" : "Viết đánh giá"}
+                        </DialogTitle>
+                    </DialogHeader>
+                    <form
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            const formData = new FormData(e.currentTarget);
+                            const comment = formData.get("comment") as string;
+                            if (editingReview) {
+                                handleEditReview({
+                                    rating: selectedRating,
+                                    comment,
+                                });
+                            } else {
+                                handleAddReview({
+                                    rating: selectedRating,
+                                    comment,
+                                });
+                            }
+                        }}
+                        className="space-y-4"
+                    >
+                        <div className="space-y-2">
+                            <Label>Đánh giá của bạn</Label>
+                            <div className="flex gap-1">
+                                {[...Array(5)].map((_, i) => (
+                                    <Button
+                                        key={i}
+                                        type="button"
+                                        variant="ghost"
+                                        size="icon"
+                                        onClick={() => setSelectedRating(i + 1)}
+                                    >
+                                        <Star
+                                            className={cn(
+                                                "h-5 w-5",
+                                                i < selectedRating
+                                                    ? "fill-yellow-400 text-yellow-400"
+                                                    : "text-muted"
+                                            )}
+                                        />
+                                    </Button>
+                                ))}
+                            </div>
+                        </div>
+                        <div className="space-y-2">
+                            <Label htmlFor="comment">Nhận xét của bạn</Label>
+                            <Textarea
+                                id="comment"
+                                name="comment"
+                                defaultValue={editingReview?.comment}
+                                required
+                            />
+                        </div>
+                        <div className="flex justify-end gap-2">
+                            <Button
+                                type="button"
+                                variant="outline"
+                                onClick={() => {
+                                    setIsReviewModalOpen(false);
+                                    setEditingReview(null);
+                                    setSelectedRating(0);
+                                }}
+                            >
+                                Hủy
+                            </Button>
+                            <Button
+                                type="submit"
+                                disabled={selectedRating === 0}
+                            >
+                                {editingReview ? "Cập nhật" : "Gửi đánh giá"}
+                            </Button>
+                        </div>
+                    </form>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

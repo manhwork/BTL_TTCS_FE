@@ -3,6 +3,7 @@
 import { FeaturedDestinations } from "@/components/featured-destinations";
 import { Newsletter } from "@/components/newsletter";
 import { PopularTours } from "@/components/popular-tours";
+import SearchTour from "@/components/search-tour";
 import { Testimonials } from "@/components/testimonials";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -20,13 +21,6 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from "@/components/ui/popover";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
 import AOS from "aos";
@@ -46,7 +40,6 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import SearchTour from "@/components/search-tour";
 
 export default function Home() {
     const [date, setDate] = useState<Date>();
