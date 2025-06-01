@@ -287,7 +287,7 @@ export default function ToursPage() {
                                 <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
                                     <div className="mb-4 sm:mb-0">
                                         <p className="text-muted-foreground">
-                                            Hiển thị {data.hits.length} chuyến
+                                            Hiển thị {data.hits?.length} chuyến
                                             đi
                                         </p>
                                     </div>
@@ -340,7 +340,7 @@ export default function ToursPage() {
                                 ) : (
                                     <div>
                                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                                            {data.hits.map((tour) => (
+                                            {data.hits?.map((tour) => (
                                                 <Link
                                                     href={`/tours/${tour._id}`}
                                                     key={tour._id}
@@ -349,7 +349,8 @@ export default function ToursPage() {
                                                         <div className="relative h-48">
                                                             <Image
                                                                 src={
-                                                                    // tour.images[0] ||
+                                                                    tour
+                                                                        .images[0] ||
                                                                     "https://media-cdn-v2.laodong.vn/Storage/NewsPortal/2023/3/9/1155741/Du-Lich-Vinh-Ha-Long-01.jpg"
                                                                 }
                                                                 alt={tour.title}

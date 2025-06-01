@@ -45,6 +45,8 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { use, useEffect, useState } from "react";
+import { RelatedTours } from "@/components/related-tours";
+import { BookingModal } from "@/components/booking-modal";
 
 interface Review {
     _id: string;
@@ -88,6 +90,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
     const [isWishlisted, setIsWishlisted] = useState(false);
     const [data, setData] = useState<Tour | null>(null);
     const [loading, setLoading] = useState(true);
+    const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
 
     useEffect(() => {
         let isMounted = true;
@@ -149,15 +152,15 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                         >
                                             Tours
                                         </Link>
-                                        <span className="text-sm text-muted-foreground">
+                                        {/* <span className="text-sm text-muted-foreground">
                                             /
-                                        </span>
-                                        <Link
+                                        </span> */}
+                                        {/* <Link
                                             href="/tours?category=island-hopping"
                                             className="text-sm text-muted-foreground hover:text-primary"
                                         >
                                             Du lịch đảo
-                                        </Link>
+                                        </Link> */}
                                         <span className="text-sm text-muted-foreground">
                                             /
                                         </span>
@@ -475,12 +478,10 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
 
                                 {/* Related Tours */}
                                 <div className="space-y-4">
-                                    <h2 className="text-2xl font-bold">
-                                        Có thể bạn cũng thích
-                                    </h2>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                                        {/* Related tours will be added later */}
-                                    </div>
+                                    <RelatedTours
+                                        currentTourId={params.id}
+                                        category={data?.category_id.title}
+                                    />
                                 </div>
                             </div>
 
@@ -552,13 +553,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                                         onSelect={setDate}
                                                         initialFocus
                                                         disabled={(date) =>
-                                                            date < new Date() ||
-                                                            date >
-                                                                new Date(
-                                                                    2023,
-                                                                    11,
-                                                                    31
-                                                                )
+                                                            date < new Date()
                                                         }
                                                     />
                                                 </PopoverContent>
@@ -644,7 +639,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                                     VND
                                                 </span>
                                             </div>
-                                            <div className="text-xs text-muted-foreground">
+                                            {/* <div className="text-xs text-muted-foreground">
                                                 Đặt cọc 20%:{" "}
                                                 {(
                                                     data.price *
@@ -653,12 +648,12 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                                     0.2
                                                 ).toLocaleString("vi-VN")}{" "}
                                                 VND
-                                            </div>
+                                            </div> */}
                                         </div>
                                     </CardContent>
                                     <CardFooter className="flex flex-col gap-2">
-                                        <div className="flex flex-col gap-4 mt-6">
-                                            <AddToCartButton
+                                        <div className="flex flex-col gap-4 ">
+                                            {/* <AddToCartButton
                                                 item={{
                                                     id: data._id,
                                                     type: "tour",
@@ -674,12 +669,15 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                                         data.category_id.title,
                                                 }}
                                                 className="w-full"
-                                            />
+                                            /> */}
                                             <Button
                                                 variant="outline"
-                                                className="w-full"
+                                                className="w-full bg-primary text-white"
+                                                onClick={() =>
+                                                    setIsBookingModalOpen(true)
+                                                }
                                             >
-                                                Đặt ngay
+                                                Yêu cầu đặt
                                             </Button>
                                         </div>
                                     </CardFooter>
@@ -729,6 +727,17 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                         </Button>
                                     </CardContent>
                                 </Card>
+
+                                <BookingModal
+                                    isOpen={isBookingModalOpen}
+                                    onClose={() => setIsBookingModalOpen(false)}
+                                    tourTitle={data.title}
+                                    tourPrice={
+                                        data.price * (1 - data.discount / 100)
+                                    }
+                                    travelers={Number(travelers)}
+                                    date={date}
+                                />
                             </div>
                         </div>
                     </div>

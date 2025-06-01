@@ -46,6 +46,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import SearchTour from "@/components/search-tour";
 
 export default function Home() {
     const [date, setDate] = useState<Date>();
@@ -176,7 +177,7 @@ export default function Home() {
                                                     <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                                                         Điểm Đến
                                                     </label>
-                                                    <Input placeholder="Bạn muốn đi đâu?" />
+                                                    <SearchTour />
                                                 </div>
                                                 <div className="space-y-2">
                                                     <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
