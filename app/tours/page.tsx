@@ -51,6 +51,7 @@ export default function ToursPage() {
     const [loading, setLoading] = useState(false);
     const [searchValue, setSearchValue] = useState("");
     const [params, setParams] = useState({});
+    const [currentPage, setCurrentPage] = useState(1);
 
     const debouncedSearchValue = useDebounce(searchValue, 500);
 
@@ -71,8 +72,11 @@ export default function ToursPage() {
             ...params,
             keyword: debouncedSearchValue,
             field: "title",
+            offset: (currentPage - 1) * 6,
+            limit: 6,
         });
-    }, [debouncedSearchValue]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [debouncedSearchValue, currentPage]);
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSearchValue(e.target.value);
@@ -137,11 +141,21 @@ export default function ToursPage() {
     const handleCategory = (categoryId: string) => {
         console.log(categoryId);
 
-        // setParams({
-        //     ...params,
-        //     category_id: e.currentTarget.id,
-        // });
+        setParams({
+            ...params,
+            tourCategory: categoryId,
+        });
     };
+
+    const handleResetFilters = () => {
+        setParams({});
+        setSearchValue("");
+    };
+
+    const handlePageChange = (page: number) => {
+        setCurrentPage(page);
+    };
+
     return (
         <div className="flex min-h-screen flex-col">
             <main className="flex-1">
@@ -168,6 +182,7 @@ export default function ToursPage() {
                                             variant="ghost"
                                             size="sm"
                                             className="h-8 text-sm"
+                                            onClick={handleResetFilters}
                                         >
                                             Đặt lại
                                         </Button>
@@ -191,16 +206,30 @@ export default function ToursPage() {
                                     <div className="space-y-2">
                                         {categories.hits?.map((category) => (
                                             <div
-                                                className="flex items-center space-x-2"
+                                                className="flex items-center space-x-2 cursor-pointer"
                                                 key={category._id}
                                                 onClick={() =>
                                                     handleCategory(category._id)
                                                 }
                                             >
-                                                <Checkbox id={category._id} />
+                                                <input
+                                                    type="radio"
+                                                    id={category._id}
+                                                    name="tourCategory"
+                                                    checked={
+                                                        params.tourCategory ===
+                                                        category._id
+                                                    }
+                                                    onChange={() =>
+                                                        handleCategory(
+                                                            category._id
+                                                        )
+                                                    }
+                                                    className="accent-primary"
+                                                />
                                                 <Label
                                                     htmlFor={category._id}
-                                                    className="font-normal"
+                                                    className="font-normal cursor-pointer"
                                                 >
                                                     {category.title}
                                                 </Label>
@@ -208,80 +237,6 @@ export default function ToursPage() {
                                         ))}
                                     </div>
                                 </div>
-                                <div className="space-y-2">
-                                    <Label>Điểm đến</Label>
-                                    <Select>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="All destinations" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="all">
-                                                Tất cả điểm đến
-                                            </SelectItem>
-                                            <SelectItem value="europe">
-                                                Châu Âu
-                                            </SelectItem>
-                                            <SelectItem value="asia">
-                                                Châu Á
-                                            </SelectItem>
-                                            <SelectItem value="africa">
-                                                Châu Phi
-                                            </SelectItem>
-                                            <SelectItem value="north-america">
-                                                Châu Mỹ
-                                            </SelectItem>
-                                            <SelectItem value="south-america">
-                                                Châu Mỹ Latinh
-                                            </SelectItem>
-                                            <SelectItem value="oceania">
-                                                Châu Úc
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>Thời gian</Label>
-                                    <Select>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Any duration" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="any">
-                                                Bất kỳ thời gian
-                                            </SelectItem>
-                                            <SelectItem value="1-3">
-                                                1-3 ngày
-                                            </SelectItem>
-                                            <SelectItem value="4-7">
-                                                4-7 ngày
-                                            </SelectItem>
-                                            <SelectItem value="8-14">
-                                                8-14 ngày
-                                            </SelectItem>
-                                            <SelectItem value="15+">
-                                                15+ ngày
-                                            </SelectItem>
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                                <div className="space-y-2">
-                                    <div className="flex items-center justify-between">
-                                        <Label>Khoảng giá</Label>
-                                        <span className="text-sm text-muted-foreground">
-                                            $500 - $5000
-                                        </span>
-                                    </div>
-                                    <Slider
-                                        defaultValue={[500, 5000]}
-                                        min={0}
-                                        max={10000}
-                                        step={100}
-                                    />
-                                </div>
-                                <Button className="w-full">
-                                    <Filter className="mr-2 h-4 w-4" />
-                                    Áp dụng bộ lọc
-                                </Button>
                             </div>
                             <div className="md:w-3/4">
                                 <div className="flex flex-col sm:flex-row justify-between items-center mb-6">
@@ -456,39 +411,91 @@ export default function ToursPage() {
                                                 </Link>
                                             ))}
                                         </div>
-                                        <div className="mt-8 flex justify-center">
-                                            <Pagination>
-                                                <PaginationContent>
-                                                    <PaginationItem>
-                                                        <PaginationPrevious href="#" />
-                                                    </PaginationItem>
-                                                    <PaginationItem>
-                                                        <PaginationLink
-                                                            href="#"
-                                                            isActive
-                                                        >
-                                                            1
-                                                        </PaginationLink>
-                                                    </PaginationItem>
-                                                    <PaginationItem>
-                                                        <PaginationLink href="#">
-                                                            2
-                                                        </PaginationLink>
-                                                    </PaginationItem>
-                                                    <PaginationItem>
-                                                        <PaginationLink href="#">
-                                                            3
-                                                        </PaginationLink>
-                                                    </PaginationItem>
-                                                    <PaginationItem>
-                                                        <PaginationEllipsis />
-                                                    </PaginationItem>
-                                                    <PaginationItem>
-                                                        <PaginationNext href="#" />
-                                                    </PaginationItem>
-                                                </PaginationContent>
-                                            </Pagination>
-                                        </div>
+                                        {data.pagination?.totalPages > 1 && (
+                                            <div className="mt-8 flex justify-center">
+                                                <Pagination>
+                                                    <PaginationContent>
+                                                        <PaginationItem>
+                                                            <PaginationPrevious
+                                                                href="#"
+                                                                onClick={(
+                                                                    e
+                                                                ) => {
+                                                                    e.preventDefault();
+                                                                    if (
+                                                                        currentPage >
+                                                                        1
+                                                                    )
+                                                                        handlePageChange(
+                                                                            currentPage -
+                                                                                1
+                                                                        );
+                                                                }}
+                                                                aria-disabled={
+                                                                    currentPage ===
+                                                                    1
+                                                                }
+                                                            />
+                                                        </PaginationItem>
+                                                        {[
+                                                            ...Array(
+                                                                data.pagination
+                                                                    .totalPages
+                                                            ),
+                                                        ].map((_, idx) => (
+                                                            <PaginationItem
+                                                                key={idx}
+                                                            >
+                                                                <PaginationLink
+                                                                    href="#"
+                                                                    isActive={
+                                                                        currentPage ===
+                                                                        idx + 1
+                                                                    }
+                                                                    onClick={(
+                                                                        e
+                                                                    ) => {
+                                                                        e.preventDefault();
+                                                                        handlePageChange(
+                                                                            idx +
+                                                                                1
+                                                                        );
+                                                                    }}
+                                                                >
+                                                                    {idx + 1}
+                                                                </PaginationLink>
+                                                            </PaginationItem>
+                                                        ))}
+                                                        <PaginationItem>
+                                                            <PaginationNext
+                                                                href="#"
+                                                                onClick={(
+                                                                    e
+                                                                ) => {
+                                                                    e.preventDefault();
+                                                                    if (
+                                                                        currentPage <
+                                                                        data
+                                                                            .pagination
+                                                                            .totalPages
+                                                                    )
+                                                                        handlePageChange(
+                                                                            currentPage +
+                                                                                1
+                                                                        );
+                                                                }}
+                                                                aria-disabled={
+                                                                    currentPage ===
+                                                                    data
+                                                                        .pagination
+                                                                        .totalPages
+                                                                }
+                                                            />
+                                                        </PaginationItem>
+                                                    </PaginationContent>
+                                                </Pagination>
+                                            </div>
+                                        )}
                                     </div>
                                 )}
                             </div>

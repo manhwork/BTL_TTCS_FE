@@ -121,7 +121,7 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
     const [editingReview, setEditingReview] = useState<Review | null>(null);
     const [userReview, setUserReview] = useState<Review | null>(null);
     const [selectedRating, setSelectedRating] = useState(
-        editingReview?.rating || 0
+        editingReview?.rating || 5
     );
 
     useEffect(() => {
@@ -235,15 +235,6 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                         >
                                             Tours
                                         </Link>
-                                        {/* <span className="text-sm text-muted-foreground">
-                                            /
-                                        </span> */}
-                                        {/* <Link
-                                            href="/tours?category=island-hopping"
-                                            className="text-sm text-muted-foreground hover:text-primary"
-                                        >
-                                            Du lịch đảo
-                                        </Link> */}
                                         <span className="text-sm text-muted-foreground">
                                             /
                                         </span>
@@ -279,42 +270,6 @@ export default function TourDetailPage({ params }: { params: { id: string } }) {
                                         <div className="flex items-center text-muted-foreground">
                                             <Users className="mr-1 h-4 w-4" />
                                             <span>Số chỗ: {data.stock}</span>
-                                        </div>
-                                        <div className="flex items-center gap-2 ml-auto">
-                                            <Button
-                                                variant="outline"
-                                                size="icon"
-                                                onClick={() =>
-                                                    setIsWishlisted(
-                                                        !isWishlisted
-                                                    )
-                                                }
-                                                className={
-                                                    isWishlisted
-                                                        ? "text-red-500"
-                                                        : ""
-                                                }
-                                            >
-                                                <Heart
-                                                    className={cn(
-                                                        "h-4 w-4",
-                                                        isWishlisted &&
-                                                            "fill-red-500"
-                                                    )}
-                                                />
-                                                <span className="sr-only">
-                                                    Thêm vào yêu thích
-                                                </span>
-                                            </Button>
-                                            <Button
-                                                variant="outline"
-                                                size="icon"
-                                            >
-                                                <Share2 className="h-4 w-4" />
-                                                <span className="sr-only">
-                                                    Chia sẻ
-                                                </span>
-                                            </Button>
                                         </div>
                                     </div>
                                 </div>

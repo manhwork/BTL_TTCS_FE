@@ -90,18 +90,21 @@ export default function LoginPage() {
                             </div>
                             <div className="grid gap-2">
                                 <div className="flex items-center justify-between">
-                                    <Label htmlFor="password">Mật khẩu</Label>
+                                    {/* <Label htmlFor="password">Mật khẩu</Label>
                                     <Link
                                         href="/forgot-password"
                                         className="text-sm text-primary underline-offset-4 hover:underline"
                                     >
                                         Quên mật khẩu?
-                                    </Link>
+                                    </Link> */}
                                 </div>
+                                <Label htmlFor="email">Mật khẩu</Label>
+
                                 <Input
                                     id="password"
                                     type="password"
                                     value={formData.password}
+                                    placeholder="Nhập mật khẩu của bạn"
                                     onChange={(e) =>
                                         setFormData({
                                             ...formData,
@@ -111,24 +114,7 @@ export default function LoginPage() {
                                     required
                                 />
                             </div>
-                            <div className="flex items-center space-x-2">
-                                <Checkbox
-                                    id="remember"
-                                    checked={formData.remember}
-                                    onCheckedChange={(checked) =>
-                                        setFormData({
-                                            ...formData,
-                                            remember: checked as boolean,
-                                        })
-                                    }
-                                />
-                                <Label
-                                    htmlFor="remember"
-                                    className="text-sm font-normal"
-                                >
-                                    Ghi nhớ đăng nhập
-                                </Label>
-                            </div>
+
                             <Button
                                 type="submit"
                                 className="w-full"
@@ -143,20 +129,7 @@ export default function LoginPage() {
                                 HOẶC TIẾP TỤC VỚI
                             </div>
                         </div>
-                        <div className="grid grid-cols-3 gap-2">
-                            <Button variant="outline" className="w-full">
-                                <Facebook className="mr-2 h-4 w-4" />
-                                Facebook
-                            </Button>
-                            <Button variant="outline" className="w-full">
-                                <Github className="mr-2 h-4 w-4" />
-                                Github
-                            </Button>
-                            <Button variant="outline" className="w-full">
-                                <Twitter className="mr-2 h-4 w-4" />
-                                Twitter
-                            </Button>
-                        </div>
+
                         <div className="text-center text-sm">
                             Chưa có tài khoản?{" "}
                             <Link

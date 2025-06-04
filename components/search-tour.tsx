@@ -1,31 +1,34 @@
 "use client";
-import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useDebounce } from "@/lib/hooks/useDebounce";
 import { getTours } from "@/service/tours";
-import { useEffect, useState } from "react";
+import { MapPin } from "lucide-react";
 import Image from "next/image";
-import { Calendar, MapPin } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 export default function SearchTour() {
     const [input, setInput] = useState("");
-    const [debouncedInput] = useDebounce(input, 400);
+    const [debouncedInput] = useDebounce(input, 1000);
     const [tours, setTours] = useState<any[]>([]);
 
     useEffect(() => {
         const fetchTours = async () => {
             const data = await getTours({
-                search: debouncedInput,
+                keyword: input,
+                field: "title",
             });
             setTours(data.hits || []);
             console.log(tours);
         };
         fetchTours();
-    }, [debouncedInput]);
+    }, [input]);
 
     return (
-        <div className="max-w-4xl mx-auto mt-10 relative">
+        <div className=" mx-auto w-full p-4  relative">
+            <h2 className="text-2xl font-bold mb-4 text-center">
+                Tìm kiếm tour
+            </h2>
             <Input
                 placeholder="Bạn muốn đi đâu?"
                 value={input}

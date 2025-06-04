@@ -11,8 +11,6 @@ import { useState } from "react";
 import { register } from "@/service/register";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-// import { Header } from "@/components/header"
-// import { Footer } from "@/components/footer"
 
 export default function RegisterPage() {
     const router = useRouter();
@@ -212,20 +210,7 @@ export default function RegisterPage() {
                                 HOẶC TIẾP TỤC VỚI
                             </div>
                         </div>
-                        <div className="grid grid-cols-3 gap-2">
-                            <Button variant="outline" className="w-full">
-                                <Facebook className="mr-2 h-4 w-4" />
-                                Facebook
-                            </Button>
-                            <Button variant="outline" className="w-full">
-                                <Github className="mr-2 h-4 w-4" />
-                                Github
-                            </Button>
-                            <Button variant="outline" className="w-full">
-                                <Twitter className="mr-2 h-4 w-4" />
-                                Twitter
-                            </Button>
-                        </div>
+
                         <div className="text-center text-sm">
                             Đã có tài khoản?{" "}
                             <Link

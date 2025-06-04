@@ -163,67 +163,10 @@ export default function Home() {
                                         </TabsList>
                                         <TabsContent
                                             value="tours"
-                                            className="p-6"
+                                            // className="p-6"
                                         >
-                                            <div className="grid gap-4 md:grid-cols-4">
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                                        Điểm Đến
-                                                    </label>
-                                                    <SearchTour />
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                                        Ngày
-                                                    </label>
-                                                    <Popover>
-                                                        <PopoverTrigger asChild>
-                                                            <Button
-                                                                variant={
-                                                                    "outline"
-                                                                }
-                                                                className={cn(
-                                                                    "w-full justify-start text-left font-normal",
-                                                                    !date &&
-                                                                        "text-muted-foreground"
-                                                                )}
-                                                            >
-                                                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                                                {date
-                                                                    ? format(
-                                                                          date,
-                                                                          "PPP"
-                                                                      )
-                                                                    : "Chọn ngày"}
-                                                            </Button>
-                                                        </PopoverTrigger>
-                                                        <PopoverContent className="w-auto p-0">
-                                                            <Calendar
-                                                                mode="single"
-                                                                selected={date}
-                                                                onSelect={
-                                                                    setDate
-                                                                }
-                                                                initialFocus
-                                                            />
-                                                        </PopoverContent>
-                                                    </Popover>
-                                                </div>
-                                                <div className="space-y-2">
-                                                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                                                        Số Người
-                                                    </label>
-                                                    <Input
-                                                        type="text"
-                                                        placeholder="Số người đi"
-                                                    />
-                                                </div>
-                                                <div className="flex items-end">
-                                                    <Button className="w-full">
-                                                        <Search className="mr-2 h-4 w-4" />
-                                                        Tìm chuyến đi
-                                                    </Button>
-                                                </div>
+                                            <div className="w-full">
+                                                <SearchTour />
                                             </div>
                                         </TabsContent>
                                     </Tabs>
@@ -503,6 +446,28 @@ export default function Home() {
                         </motion.div>
                     </div>
                 </section>
+
+                <div className="container px-4 md:px-6">
+                    <Card className="border-none shadow-2xl bg-white/80 backdrop-blur-md rounded-2xl">
+                        <CardContent className="p-0">
+                            <div className="flex flex-col items-center justify-center py-8 px-4 md:px-12">
+                                <h2 className="text-2xl md:text-3xl font-bold text-primary mb-2 text-center">
+                                    Tìm kiếm tour du lịch phù hợp
+                                </h2>
+                                <p className="text-muted-foreground mb-6 text-center max-w-xl">
+                                    Nhập điểm đến, ngày khởi hành hoặc các tiêu
+                                    chí khác để khám phá hành trình lý tưởng cho
+                                    bạn.
+                                </p>
+                                <div className="w-full max-w-2xl">
+                                    <div className="">
+                                        <SearchTour />
+                                    </div>
+                                </div>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
 
                 <Newsletter />
             </main>
