@@ -17,19 +17,15 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/components/ui/sheet";
-import { useCart } from "@/context/cart-context";
-import { getCookie, removeCookie } from "@/lib/cookies";
-import { Globe, Menu, ShoppingCart, User } from "lucide-react";
+import { useAuth } from "@/contexts/AuthContext";
+import { Globe, Menu, User } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { toast } from "sonner";
 
 export function Header() {
     const [isScrolled, setIsScrolled] = useState(false);
-    const { getCartCount } = useCart();
-    const cartCount = getCartCount();
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const { user, logout } = useAuth();
     const router = useRouter();
 
     // Listen for scroll events to update header styling
@@ -41,21 +37,6 @@ export function Header() {
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
-
-    // Kiểm tra trạng thái đăng nhập khi component mount
-    useEffect(() => {
-        const accessToken = getCookie("accessToken");
-        console.log("accessToken", accessToken);
-        setIsLoggedIn(!!accessToken);
-    }, []);
-
-    const handleLogout = () => {
-        removeCookie("accessToken");
-        removeCookie("refreshToken");
-        setIsLoggedIn(false);
-        toast.success("Đăng xuất thành công!");
-        router.push("/");
-    };
 
     return (
         <header
@@ -170,12 +151,6 @@ export function Header() {
                     </Link>
                 </nav>
                 <div className="flex items-center gap-2">
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="text-foreground hover:text-ocean-600 hover:bg-ocean-50 relative"
-                        asChild
-                    ></Button>
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button
@@ -191,10 +166,10 @@ export function Header() {
                             align="end"
                             className="w-56 border-ocean-100"
                         >
-                            {isLoggedIn ? (
+                            {user ? (
                                 <>
                                     <DropdownMenuLabel className="text-ocean-700">
-                                        Tài khoản của tôi
+                                        {user?.fullName || "Tài khoản của tôi"}
                                     </DropdownMenuLabel>
                                     <DropdownMenuSeparator className="bg-ocean-100" />
                                     <DropdownMenuItem asChild>
@@ -213,17 +188,10 @@ export function Header() {
                                             Đặt chỗ của tôi
                                         </Link>
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem asChild>
-                                        <Link
-                                            href="/wishlist"
-                                            className="hover:text-ocean-700 cursor-pointer"
-                                        >
-                                            Danh sách yêu thích
-                                        </Link>
-                                    </DropdownMenuItem>
+
                                     <DropdownMenuSeparator className="bg-ocean-100" />
                                     <DropdownMenuItem
-                                        onClick={handleLogout}
+                                        onClick={logout}
                                         className="hover:text-ocean-700 cursor-pointer"
                                     >
                                         Đăng xuất

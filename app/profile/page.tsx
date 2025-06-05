@@ -17,6 +17,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
+import { useAuth } from "@/contexts/AuthContext";
 
 interface UserProfile {
     fullName: string;
@@ -38,21 +39,7 @@ export default function ProfilePage() {
         status: "",
     });
 
-    useEffect(() => {
-        // Kiểm tra đăng nhập
-        const accessToken = getCookie("accessToken");
-        if (!accessToken) {
-            window.location.href = "/login";
-            return;
-        }
-
-        // TODO: Gọi API lấy thông tin user
-        // Tạm thời lấy từ localStorage
-        const userInfo = localStorage.getItem("userInfo");
-        if (userInfo) {
-            setProfile(JSON.parse(userInfo));
-        }
-    }, []);
+    const { user } = useAuth();
 
     const handleUpdateProfile = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -88,15 +75,15 @@ export default function ProfilePage() {
                     </div>
 
                     <Tabs defaultValue="profile" className="space-y-6">
-                        <TabsList>
-                            <TabsTrigger value="profile">
+                        {/* <TabsList> */}
+                        {/* <TabsTrigger value="profile">
                                 Thông tin cá nhân
-                            </TabsTrigger>
-                            <TabsTrigger value="security">Bảo mật</TabsTrigger>
+                            </TabsTrigger> */}
+                        {/* <TabsTrigger value="security">Bảo mật</TabsTrigger>
                             <TabsTrigger value="bookings">
                                 Đặt chỗ của tôi
-                            </TabsTrigger>
-                        </TabsList>
+                            </TabsTrigger> */}
+                        {/* </TabsList> */}
 
                         <TabsContent value="profile">
                             <Card>
@@ -118,7 +105,7 @@ export default function ProfilePage() {
                                                 </Label>
                                                 <Input
                                                     id="fullName"
-                                                    value={profile.fullName}
+                                                    value={user?.fullName}
                                                     onChange={(e) =>
                                                         setProfile({
                                                             ...profile,
@@ -135,11 +122,11 @@ export default function ProfilePage() {
                                                 <Input
                                                     id="email"
                                                     type="email"
-                                                    value={profile.email}
-                                                    disabled
+                                                    value={user?.email}
+                                                    // disabled
                                                 />
                                             </div>
-                                            <div className="space-y-2">
+                                            {/* <div className="space-y-2">
                                                 <Label htmlFor="phone">
                                                     Số điện thoại
                                                 </Label>
@@ -155,26 +142,26 @@ export default function ProfilePage() {
                                                         })
                                                     }
                                                 />
-                                            </div>
+                                            </div> */}
                                             <div className="space-y-2">
                                                 <Label htmlFor="role">
                                                     Vai trò
                                                 </Label>
                                                 <Input
                                                     id="role"
-                                                    value={profile.role}
-                                                    disabled
+                                                    value={user?.role}
+                                                    // disabled
                                                 />
                                             </div>
                                         </div>
-                                        <Button
+                                        {/* <Button
                                             type="submit"
                                             disabled={loading}
                                         >
                                             {loading
                                                 ? "Đang xử lý..."
                                                 : "Cập nhật thông tin"}
-                                        </Button>
+                                        </Button> */}
                                     </form>
                                 </CardContent>
                             </Card>

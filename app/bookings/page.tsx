@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -8,15 +9,14 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Globe } from "lucide-react";
-import Link from "next/link";
-import { useState, useEffect } from "react";
-import { getCookie } from "@/lib/cookies";
-import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { useAuth } from "@/contexts/AuthContext";
+import http from "@/service/http";
 import { format } from "date-fns";
 import { vi } from "date-fns/locale";
+import { Globe } from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
 interface Booking {
     id: string;
@@ -33,58 +33,27 @@ interface Booking {
 
 export default function BookingsPage() {
     const [loading, setLoading] = useState(false);
-    const [bookings, setBookings] = useState<Booking[]>([]);
+    const [bookings, setBookings] = useState([]);
+
+    const { user } = useAuth();
 
     useEffect(() => {
-        // Kiểm tra đăng nhập
-        const accessToken = getCookie("accessToken");
-        if (!accessToken) {
-            window.location.href = "/login";
-            return;
-        }
+        const fetchBookings = async () => {
+            setLoading(true);
+            try {
+                const response = await http.get(
+                    `/tours/bookings/${user?.email}`
+                );
 
-        // TODO: Gọi API lấy danh sách đặt tour
-        // Tạm thời dùng dữ liệu mẫu
-        setBookings([
-            {
-                id: "1",
-                tourId: "1",
-                tourName: "Tour Du lịch Đà Nẵng - Hội An 3N2Đ",
-                tourImage:
-                    "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b",
-                startDate: "2024-04-01",
-                endDate: "2024-04-03",
-                numberOfPeople: 2,
-                totalPrice: 5000000,
-                status: "confirmed",
-                createdAt: "2024-03-15",
-            },
-            {
-                id: "2",
-                tourId: "2",
-                tourName: "Tour Du lịch Nha Trang 4N3Đ",
-                tourImage:
-                    "https://images.unsplash.com/photo-1552733407-5d5c46c3bb3b",
-                startDate: "2024-05-01",
-                endDate: "2024-05-04",
-                numberOfPeople: 4,
-                totalPrice: 12000000,
-                status: "pending",
-                createdAt: "2024-03-20",
-            },
-        ]);
-    }, []);
-
-    const getStatusBadge = (status: Booking["status"]) => {
-        const statusMap = {
-            pending: { label: "Chờ xác nhận", variant: "warning" },
-            confirmed: { label: "Đã xác nhận", variant: "success" },
-            cancelled: { label: "Đã hủy", variant: "destructive" },
-            completed: { label: "Hoàn thành", variant: "default" },
+                setBookings(response.data.data.hits);
+            } catch (error) {
+                console.error("Error fetching bookings:", error);
+            } finally {
+                setLoading(false);
+            }
         };
-        const { label, variant } = statusMap[status];
-        return <Badge variant={variant as any}>{label}</Badge>;
-    };
+        fetchBookings();
+    }, []);
 
     const formatDate = (date: string) => {
         return format(new Date(date), "dd/MM/yyyy", { locale: vi });
@@ -95,6 +64,12 @@ export default function BookingsPage() {
             style: "currency",
             currency: "VND",
         }).format(price);
+    };
+
+    const handlePayment = async (bookingId: string) => {
+        console.log("Handling payment for booking ID:", bookingId);
+        const res = await http.post(`/payment/create-payment-url/${bookingId}`);
+        window.location.href = res.data;
     };
 
     return (
@@ -116,37 +91,37 @@ export default function BookingsPage() {
                     </div>
 
                     <Tabs defaultValue="all" className="space-y-6">
-                        <TabsList>
-                            <TabsTrigger value="all">Tất cả</TabsTrigger>
-                            <TabsTrigger value="pending">
-                                Chờ xác nhận
-                            </TabsTrigger>
-                            <TabsTrigger value="confirmed">
-                                Đã xác nhận
-                            </TabsTrigger>
-                            <TabsTrigger value="completed">
-                                Hoàn thành
-                            </TabsTrigger>
-                            <TabsTrigger value="cancelled">Đã hủy</TabsTrigger>
-                        </TabsList>
-
                         <TabsContent value="all" className="space-y-4">
                             {bookings.map((booking) => (
-                                <Card key={booking.id}>
+                                <Card key={booking._id}>
                                     <CardHeader>
                                         <div className="flex justify-between items-start">
                                             <div>
-                                                <CardTitle>
-                                                    {booking.tourName}
-                                                </CardTitle>
+                                                <Link
+                                                    href={`/tours/${booking.tour_id._id}`}
+                                                >
+                                                    <CardTitle color="primary">
+                                                        {booking.tour_id.title}
+                                                    </CardTitle>
+                                                </Link>
                                                 <CardDescription>
                                                     Đặt ngày:{" "}
                                                     {formatDate(
-                                                        booking.createdAt
+                                                        booking?.created_at
                                                     )}
                                                 </CardDescription>
                                             </div>
-                                            {getStatusBadge(booking.status)}
+                                            {booking.status === "pending" ? (
+                                                <Badge variant="warning">
+                                                    Chờ xác nhận
+                                                </Badge>
+                                            ) : (
+                                                <>
+                                                    <Badge variant="default">
+                                                        Đã thanh toán
+                                                    </Badge>
+                                                </>
+                                            )}
                                         </div>
                                     </CardHeader>
                                     <CardContent>
@@ -155,28 +130,28 @@ export default function BookingsPage() {
                                                 <p className="text-sm text-muted-foreground">
                                                     Ngày khởi hành:{" "}
                                                     {formatDate(
-                                                        booking.startDate
+                                                        booking.start_date
                                                     )}
                                                 </p>
-                                                <p className="text-sm text-muted-foreground">
+                                                {/* <p className="text-sm text-muted-foreground">
                                                     Ngày kết thúc:{" "}
                                                     {formatDate(
                                                         booking.endDate
                                                     )}
-                                                </p>
+                                                </p> */}
                                                 <p className="text-sm text-muted-foreground">
                                                     Số người:{" "}
-                                                    {booking.numberOfPeople}
+                                                    {booking.number_of_people}
                                                 </p>
                                             </div>
                                             <div className="space-y-2">
                                                 <p className="text-sm font-medium">
                                                     Tổng tiền:{" "}
                                                     {formatPrice(
-                                                        booking.totalPrice
+                                                        booking.total_price
                                                     )}
                                                 </p>
-                                                {booking.status ===
+                                                {/* {booking.status ===
                                                     "confirmed" && (
                                                     <Button
                                                         variant="outline"
@@ -184,14 +159,19 @@ export default function BookingsPage() {
                                                     >
                                                         Xem chi tiết
                                                     </Button>
-                                                )}
+                                                )} */}
                                                 {booking.status ===
                                                     "pending" && (
                                                     <Button
-                                                        variant="destructive"
+                                                        variant="default"
                                                         className="w-full"
+                                                        onClick={(e) =>
+                                                            handlePayment(
+                                                                booking._id
+                                                            )
+                                                        }
                                                     >
-                                                        Hủy đặt tour
+                                                        Thanh toán
                                                     </Button>
                                                 )}
                                             </div>
@@ -199,54 +179,6 @@ export default function BookingsPage() {
                                     </CardContent>
                                 </Card>
                             ))}
-                        </TabsContent>
-
-                        <TabsContent value="pending" className="space-y-4">
-                            {bookings
-                                .filter(
-                                    (booking) => booking.status === "pending"
-                                )
-                                .map((booking) => (
-                                    <Card key={booking.id}>
-                                        {/* Tương tự như trên */}
-                                    </Card>
-                                ))}
-                        </TabsContent>
-
-                        <TabsContent value="confirmed" className="space-y-4">
-                            {bookings
-                                .filter(
-                                    (booking) => booking.status === "confirmed"
-                                )
-                                .map((booking) => (
-                                    <Card key={booking.id}>
-                                        {/* Tương tự như trên */}
-                                    </Card>
-                                ))}
-                        </TabsContent>
-
-                        <TabsContent value="completed" className="space-y-4">
-                            {bookings
-                                .filter(
-                                    (booking) => booking.status === "completed"
-                                )
-                                .map((booking) => (
-                                    <Card key={booking.id}>
-                                        {/* Tương tự như trên */}
-                                    </Card>
-                                ))}
-                        </TabsContent>
-
-                        <TabsContent value="cancelled" className="space-y-4">
-                            {bookings
-                                .filter(
-                                    (booking) => booking.status === "cancelled"
-                                )
-                                .map((booking) => (
-                                    <Card key={booking.id}>
-                                        {/* Tương tự như trên */}
-                                    </Card>
-                                ))}
                         </TabsContent>
                     </Tabs>
                 </div>

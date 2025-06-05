@@ -5,6 +5,7 @@ import { CartProvider } from "@/context/cart-context";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { Toaster } from "@/components/ui/toaster";
+import { AuthProvider } from "@/contexts/AuthContext";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -21,20 +22,18 @@ export default function RootLayout({
     return (
         <html lang="en">
             <body>
-                <ThemeProvider
-                    attribute="class"
-                    defaultTheme="system"
-                    enableSystem
-                >
-                    <CartProvider>
-                        <div className="flex min-h-screen flex-col">
-                            <Header />
-                            <main className="flex-1">{children}</main>
-                            <Footer />
-                        </div>
-                        <Toaster />
-                    </CartProvider>
-                </ThemeProvider>
+                <AuthProvider>
+                    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+                        <CartProvider>
+                            <div className="flex min-h-screen flex-col">
+                                <Header />
+                                <main className="flex-1">{children}</main>
+                                <Footer />
+                            </div>
+                            <Toaster />
+                        </CartProvider>
+                    </ThemeProvider>
+                </AuthProvider>
             </body>
         </html>
     );

@@ -5,8 +5,6 @@ import { Newsletter } from "@/components/newsletter";
 import { PopularTours } from "@/components/popular-tours";
 import SearchTour from "@/components/search-tour";
 import { Testimonials } from "@/components/testimonials";
-import { Button } from "@/components/ui/button";
-import { Calendar } from "@/components/ui/calendar";
 import {
     Card,
     CardContent,
@@ -15,25 +13,15 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from "@/components/ui/popover";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { cn } from "@/lib/utils";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { format } from "date-fns";
 import { motion } from "framer-motion";
 import {
     ArrowRight,
-    CalendarIcon,
     CreditCard,
     Globe,
     Headphones,
-    Search,
     Shield,
     ThumbsUp,
 } from "lucide-react";

@@ -3,20 +3,21 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Separator } from "@/components/ui/separator";
-import { Facebook, Github, Globe, Twitter } from "lucide-react";
-import Link from "next/link";
-import { useState } from "react";
-import { login } from "@/service/auth";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
+import { useAuth } from "@/contexts/AuthContext";
 import { setCookie } from "@/lib/cookies";
+import { login } from "@/service/auth";
+import { Globe } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
 // import { Header } from "@/components/header"
 // import { Footer } from "@/components/footer"
 
 export default function LoginPage() {
     const router = useRouter();
+    const { login: authLogin, user } = useAuth();
     const [formData, setFormData] = useState({
         email: "",
         password: "",
@@ -28,7 +29,22 @@ export default function LoginPage() {
         e.preventDefault();
         try {
             setLoading(true);
+            console.log("Calling login API with:", formData);
             const response = await login(formData.email, formData.password);
+            console.log("Login API response:", response);
+
+            // Sử dụng AuthContext để xử lý đăng nhập
+            console.log("Calling authLogin with:", {
+                accessToken: response.data.accessToken,
+                refreshToken: response.data.refreshToken,
+                userInfo: response.data.userInfo,
+            });
+
+            authLogin(
+                response.data.accessToken,
+                response.data.refreshToken,
+                response.data.userInfo
+            );
 
             // Lưu accessToken và refreshToken vào cookie
             setCookie("accessToken", response.data.accessToken, {
@@ -41,8 +57,9 @@ export default function LoginPage() {
 
             toast.success("Đăng nhập thành công!");
             // Chuyển hướng về trang chủ và reload trang
-            window.location.href = "/";
+            // window.location.href = "/";
         } catch (error: any) {
+            console.error("Login error:", error);
             toast.error(error.response?.data?.message || "Đăng nhập thất bại!");
         } finally {
             setLoading(false);
