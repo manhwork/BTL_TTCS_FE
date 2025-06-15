@@ -137,12 +137,12 @@ export function Header() {
                     >
                         AI Planner
                     </Link>
-                    <Link
+                    {/* <Link
                         href="/blog"
                         className="text-sm font-medium transition-colors hover:text-ocean-600"
                     >
                         Blog
-                    </Link>
+                    </Link> */}
                     <Link
                         href="/about"
                         className="text-sm font-medium transition-colors hover:text-ocean-600"
